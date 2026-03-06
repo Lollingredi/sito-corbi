@@ -11,7 +11,6 @@ interface Project {
   tags: string[];
   github?: string;
   live?: string;
-  emoji: string;
 }
 
 const projects: Project[] = [
@@ -20,21 +19,19 @@ const projects: Project[] = [
     description:
       "Analisi esplorativa di un dataset di vendite retail per identificare trend stagionali, prodotti più performanti e aree di miglioramento. Dashboard interattiva creata con Tableau.",
     tags: ["Python", "Pandas", "Tableau", "Excel"],
-    emoji: "📊",
   },
+
   {
     title: "Dashboard KPI Aziendale",
     description:
       "Sviluppo di una dashboard Power BI per il monitoraggio dei KPI aziendali in tempo reale, con integrazione di dati da SQL Server e automazione del reporting mensile.",
     tags: ["Power BI", "SQL", "DAX", "Excel"],
-    emoji: "📈",
   },
   {
     title: "Segmentazione Clienti con ML",
     description:
       "Progetto di clustering per la segmentazione della base clienti di un e-commerce, utilizzando algoritmi K-Means per identificare profili di acquisto e personalizzare le campagne marketing.",
     tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib"],
-    emoji: "🤖",
   },
 ];
 
@@ -76,7 +73,6 @@ export default function Projects() {
               transition={{ duration: 0.6, delay: i * 0.1 }}
               className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
-              <div className="text-4xl mb-4">{project.emoji}</div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">{project.title}</h3>
               <p className="text-gray-500 text-sm leading-relaxed flex-1">{project.description}</p>
 

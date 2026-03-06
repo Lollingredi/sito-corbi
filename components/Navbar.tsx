@@ -49,7 +49,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/resume-placeholder.pdf"
+            href="/MC_CV_ITA.pdf"
             download
             className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-full transition-colors"
           >
@@ -82,7 +82,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/resume-placeholder.pdf"
+            href="/MC_CV_ITA.pdf"
             download
             className="flex items-center gap-2 bg-indigo-500 text-white font-medium px-4 py-2 rounded-full w-fit"
             onClick={() => setMenuOpen(false)}

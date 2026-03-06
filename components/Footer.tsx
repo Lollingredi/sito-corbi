@@ -26,7 +26,7 @@ export default function Footer() {
             <FiMail className="w-5 h-5" />
           </a>
           <a
-            href="#"
+            href="https://www.linkedin.com/in/michele-corbisiero-190512238/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors"

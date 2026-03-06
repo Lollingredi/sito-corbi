@@ -70,7 +70,7 @@ export default function Contact() {
 
           {/* LinkedIn */}
           <a
-            href="#"
+            href="https://www.linkedin.com/in/michele-corbisiero-190512238/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all group"

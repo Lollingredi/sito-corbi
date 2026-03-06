@@ -29,7 +29,7 @@ export default function Resume() {
           e le competenze tecniche.
         </p>
         <a
-          href="/resume-placeholder.pdf"
+          href="/MC_CV_ITA.pdf"
           download
           className="inline-flex items-center gap-3 bg-white text-indigo-600 font-bold px-8 py-4 rounded-full hover:bg-indigo-50 transition-colors shadow-lg text-lg"
         >
