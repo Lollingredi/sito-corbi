@@ -62,7 +62,7 @@ export default function Hero() {
         >
           <div className="w-56 h-56 sm:w-72 sm:h-72 rounded-full border-4 border-indigo-200 shadow-xl overflow-hidden bg-gradient-to-br from-indigo-100 to-emerald-100">
             <Image
-              src="/michele.jpg"
+              src="/michele.jpeg"
               alt="Michele Corbisiero"
               width={288}
               height={288}
