@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { SiPython, SiTableau, SiR } from "react-icons/si";
+import { SiPython, SiR } from "react-icons/si";
 import { TbFileExcel, TbSql, TbChartBar, TbLanguage } from "react-icons/tb";
 
 interface Skill {
@@ -25,7 +25,7 @@ const skillCategories: SkillCategory[] = [
       { name: "SQL", sub: "JOIN, GROUP BY, window functions", icon: <TbSql />, color: "text-blue-500" },
       { name: "Python", sub: "pandas, NumPy, matplotlib, scikit-learn", icon: <SiPython />, color: "text-yellow-500" },
       { name: "R", sub: "dplyr, ggplot2", icon: <SiR />, color: "text-blue-700" },
-      { name: "Tableau", icon: <SiTableau />, color: "text-blue-600" },
+      { name: "Tableau", icon: <TbChartBar />, color: "text-blue-600" },
       { name: "Microsoft Excel", sub: "Pivot Tables, XLOOKUP", icon: <TbFileExcel />, color: "text-emerald-600" },
     ],
   },
