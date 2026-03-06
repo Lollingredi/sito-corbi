@@ -23,7 +23,7 @@ export default function About() {
           <div className="flex-shrink-0">
             <div className="w-56 h-56 rounded-2xl border-2 border-indigo-200 shadow-lg overflow-hidden bg-gradient-to-br from-indigo-100 to-emerald-100">
               <Image
-                src="/michele.jpg"
+                src="/michele.jpeg"
                 alt="Michele Corbisiero"
                 width={224}
                 height={224}
