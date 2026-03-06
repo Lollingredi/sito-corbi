@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
 
 export default function About() {
   const ref = useRef(null);
@@ -18,10 +19,16 @@ export default function About() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          {/* Photo placeholder */}
+          {/* Photo */}
           <div className="flex-shrink-0">
-            <div className="w-56 h-56 rounded-2xl bg-gradient-to-br from-indigo-100 to-emerald-100 border-2 border-indigo-200 flex items-center justify-center shadow-lg">
-              <span className="text-6xl select-none">🧑‍💻</span>
+            <div className="w-56 h-56 rounded-2xl border-2 border-indigo-200 shadow-lg overflow-hidden bg-gradient-to-br from-indigo-100 to-emerald-100">
+              <Image
+                src="/michele.jpg"
+                alt="Michele Corbisiero"
+                width={224}
+                height={224}
+                className="w-full h-full object-cover object-top"
+              />
             </div>
           </div>
 
@@ -38,29 +45,28 @@ export default function About() {
             </h2>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Sono Michele Cobisiero, un Data Analyst appassionato di dati e storytelling.
-                Credo che i numeri, da soli, non bastino: è il{" "}
-                <span className="text-indigo-500 font-medium">contesto e la narrazione</span>{" "}
-                a renderli potenti.
+                Sono <span className="font-medium text-gray-800">Michele Corbisiero</span>, Data Analyst alle prime fasi di carriera con{" "}
+                <span className="text-indigo-500 font-medium">doppia laurea magistrale in Economia e Analisi dei Dati</span>.
               </p>
               <p>
-                Il mio percorso mi ha portato a padroneggiare strumenti come{" "}
-                <span className="font-medium text-gray-800">Python, SQL, Tableau</span> e{" "}
-                <span className="font-medium text-gray-800">Power BI</span>, con i quali
-                aiuto le aziende a prendere decisioni basate sui dati.
+                Ho maturato esperienza pratica in progetti accademici incentrati sui dati,
+                con competenze operative in{" "}
+                <span className="font-medium text-gray-800">SQL</span> e nelle attività di pulizia,
+                manipolazione, visualizzazione dei dati e analisi orientata al business.
               </p>
               <p>
-                [Questa sezione verrà aggiornata con la bio completa di Michele
-                non appena il CV sarà disponibile.]
+                Utilizzo strumenti come{" "}
+                <span className="font-medium text-gray-800">Python, R, SQL e Tableau</span> per
+                trasformare dati grezzi in insight chiari e utili alle decisioni strategiche.
               </p>
             </div>
 
             {/* Quick facts */}
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
               {[
-                { label: "Anni di esperienza", value: "—" },
-                { label: "Progetti completati", value: "—" },
-                { label: "Settori analizzati", value: "—" },
+                { label: "Voto Magistrale", value: "110/110" },
+                { label: "Lingue", value: "4" },
+                { label: "Certificazioni", value: "Google" },
               ].map((fact) => (
                 <div key={fact.label} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
                   <div className="text-2xl font-bold text-indigo-500">{fact.value}</div>

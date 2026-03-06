@@ -3,18 +3,12 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { SiPython, SiMysql, SiJupyter, SiGit } from "react-icons/si";
-import {
-  TbChartBar,
-  TbFileExcel,
-  TbDatabase,
-  TbChartPie,
-  TbReportAnalytics,
-  TbSql,
-} from "react-icons/tb";
+import { SiPython, SiTableau, SiR } from "react-icons/si";
+import { TbFileExcel, TbSql, TbChartBar, TbLanguage } from "react-icons/tb";
 
 interface Skill {
   name: string;
+  sub?: string;
   icon: React.ReactNode;
   color: string;
 }
@@ -26,27 +20,32 @@ interface SkillCategory {
 
 const skillCategories: SkillCategory[] = [
   {
-    category: "Linguaggi & Query",
+    category: "Strumenti & Linguaggi",
     skills: [
-      { name: "Python", icon: <SiPython />, color: "text-yellow-500" },
-      { name: "SQL", icon: <TbSql />, color: "text-blue-500" },
-      { name: "MySQL", icon: <SiMysql />, color: "text-orange-500" },
+      { name: "SQL", sub: "JOIN, GROUP BY, window functions", icon: <TbSql />, color: "text-blue-500" },
+      { name: "Python", sub: "pandas, NumPy, matplotlib, scikit-learn", icon: <SiPython />, color: "text-yellow-500" },
+      { name: "R", sub: "dplyr, ggplot2", icon: <SiR />, color: "text-blue-700" },
+      { name: "Tableau", icon: <SiTableau />, color: "text-blue-600" },
+      { name: "Microsoft Excel", sub: "Pivot Tables, XLOOKUP", icon: <TbFileExcel />, color: "text-emerald-600" },
     ],
   },
   {
-    category: "Visualizzazione",
+    category: "Analisi dei Dati",
     skills: [
-      { name: "Tableau", icon: <TbChartBar />, color: "text-blue-600" },
-      { name: "Power BI", icon: <TbChartPie />, color: "text-yellow-500" },
-      { name: "Excel", icon: <TbFileExcel />, color: "text-emerald-600" },
+      { name: "Statistica descrittiva e inferenziale", icon: <TbChartBar />, color: "text-indigo-500" },
+      { name: "Test di ipotesi e regressione", icon: <TbChartBar />, color: "text-purple-500" },
+      { name: "Exploratory Data Analysis (EDA)", icon: <TbChartBar />, color: "text-amber-500" },
+      { name: "Data wrangling e validazione", icon: <TbChartBar />, color: "text-emerald-500" },
+      { name: "Dashboard e reporting KPI", icon: <TbChartBar />, color: "text-rose-500" },
     ],
   },
   {
-    category: "Tools & Altro",
+    category: "Lingue",
     skills: [
-      { name: "Jupyter", icon: <SiJupyter />, color: "text-orange-400" },
-      { name: "Git", icon: <SiGit />, color: "text-red-500" },
-      { name: "Analisi Dati", icon: <TbReportAnalytics />, color: "text-indigo-500" },
+      { name: "Italiano", sub: "madrelingua", icon: <TbLanguage />, color: "text-green-600" },
+      { name: "Inglese", sub: "C1", icon: <TbLanguage />, color: "text-blue-500" },
+      { name: "Francese", sub: "C1", icon: <TbLanguage />, color: "text-indigo-500" },
+      { name: "Tedesco", sub: "B1", icon: <TbLanguage />, color: "text-gray-600" },
     ],
   },
 ];
@@ -75,8 +74,7 @@ export default function Skills() {
             Competenze
           </h2>
           <p className="text-gray-500 mt-4 max-w-xl mx-auto">
-            Gli strumenti e le tecnologie che utilizzo ogni giorno per trasformare
-            i dati in insight azionabili.
+            Gli strumenti e le tecnologie che utilizzo per trasformare i dati in insight azionabili.
           </p>
         </motion.div>
 
@@ -96,10 +94,15 @@ export default function Skills() {
                 {cat.skills.map((skill) => (
                   <div
                     key={skill.name}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
+                    className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
                   >
-                    <span className={`text-2xl ${skill.color}`}>{skill.icon}</span>
-                    <span className="font-medium text-gray-700">{skill.name}</span>
+                    <span className={`text-2xl mt-0.5 flex-shrink-0 ${skill.color}`}>{skill.icon}</span>
+                    <div>
+                      <div className="font-medium text-gray-700 text-sm">{skill.name}</div>
+                      {skill.sub && (
+                        <div className="text-xs text-gray-400 mt-0.5">{skill.sub}</div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

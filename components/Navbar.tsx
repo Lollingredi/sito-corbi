@@ -5,6 +5,7 @@ import { FiMenu, FiX, FiDownload } from "react-icons/fi";
 
 const navLinks = [
   { label: "Chi sono", href: "#about" },
+  { label: "Istruzione", href: "#education" },
   { label: "Progetti", href: "#projects" },
   { label: "Competenze", href: "#skills" },
   { label: "Contatti", href: "#contact" },
@@ -33,7 +34,7 @@ export default function Navbar() {
           className="text-lg font-bold text-gray-900"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Michele Cobisiero
+          Michele Corbisiero
         </a>
 
         {/* Desktop nav */}

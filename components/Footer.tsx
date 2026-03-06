@@ -10,16 +10,16 @@ export default function Footer() {
           className="text-white font-bold text-lg"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          Michele Cobisiero
+          Michele Corbisiero
         </div>
 
         <div className="text-sm text-center">
-          © {year} Michele Cobisiero · Data Analyst
+          © {year} Michele Corbisiero · Data Analyst
         </div>
 
         <div className="flex items-center gap-4">
           <a
-            href="mailto:michele@example.com"
+            href="mailto:corbisieromichele00@gmail.com"
             className="hover:text-white transition-colors"
             aria-label="Email"
           >

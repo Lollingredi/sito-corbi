@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { FiMail, FiLinkedin, FiGithub } from "react-icons/fi";
+import { FiMail, FiLinkedin, FiGithub, FiPhone } from "react-icons/fi";
 
 export default function Contact() {
   const ref = useRef(null);
@@ -38,11 +38,25 @@ export default function Contact() {
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
         >
+          {/* Phone */}
+          <a
+            href="tel:+393505336746"
+            className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-emerald-200 hover:bg-emerald-50 transition-all group"
+          >
+            <div className="w-12 h-12 bg-emerald-100 group-hover:bg-emerald-200 rounded-full flex items-center justify-center transition-colors">
+              <FiPhone className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div className="text-center">
+              <div className="font-semibold text-gray-800 text-sm">Telefono</div>
+              <div className="text-gray-500 text-sm mt-1">+39 350 5336746</div>
+            </div>
+          </a>
+
           {/* Email */}
           <a
-            href="mailto:michele@example.com"
+            href="mailto:corbisieromichele00@gmail.com"
             className="flex flex-col items-center gap-3 p-6 bg-gray-50 rounded-2xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all group"
           >
             <div className="w-12 h-12 bg-indigo-100 group-hover:bg-indigo-200 rounded-full flex items-center justify-center transition-colors">
@@ -50,7 +64,7 @@ export default function Contact() {
             </div>
             <div className="text-center">
               <div className="font-semibold text-gray-800 text-sm">Email</div>
-              <div className="text-gray-500 text-sm mt-1">michele@example.com</div>
+              <div className="text-gray-500 text-sm mt-1">corbisieromichele00@gmail.com</div>
             </div>
           </a>
 

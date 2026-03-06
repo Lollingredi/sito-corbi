@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Michele Cobisiero | Data Analyst",
+  title: "Michele Corbisiero | Data Analyst",
   description:
-    "Portfolio di Michele Cobisiero, Data Analyst specializzato in Python, SQL, Tableau e Power BI.",
+    "Portfolio di Michele Corbisiero, Data Analyst specializzato in Python, SQL, R e Tableau.",
 };
 
 export default function RootLayout({
