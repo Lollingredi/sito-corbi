@@ -1,7 +1,11 @@
+"use client";
+
 import { FiLinkedin, FiGithub, FiMail } from "react-icons/fi";
+import { useLang } from "@/context/LanguageContext";
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useLang();
 
   return (
     <footer className="bg-gray-900 text-gray-400 py-10">
@@ -14,7 +18,7 @@ export default function Footer() {
         </div>
 
         <div className="text-sm text-center">
-          © {year} Michele Corbisiero · Data Analyst
+          © {year} Michele Corbisiero · {t("footer_role")}
         </div>
 
         <div className="flex items-center gap-4">

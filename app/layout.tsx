@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { LanguageProvider } from "@/context/LanguageContext";
+import HtmlLang from "@/components/HtmlLang";
 
 export const metadata: Metadata = {
   title: "Michele Corbisiero | Data Analyst",
   description:
-    "Portfolio di Michele Corbisiero, Data Analyst specializzato in Python, SQL, R e Tableau.",
+    "Portfolio of Michele Corbisiero, Data Analyst specialised in Python, SQL, R and Tableau.",
 };
 
 export default function RootLayout({
@@ -23,7 +25,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        {children}
+        <LanguageProvider>
+          <HtmlLang />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

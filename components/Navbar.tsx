@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiDownload } from "react-icons/fi";
+import { useLang } from "@/context/LanguageContext";
+import { TranslationKey } from "@/lib/translations";
 
-const navLinks = [
-  { label: "Chi sono", href: "#about" },
-  { label: "Istruzione", href: "#education" },
-  { label: "Progetti", href: "#projects" },
-  { label: "Competenze", href: "#skills" },
-  { label: "Contatti", href: "#contact" },
+const navLinkKeys: { labelKey: TranslationKey; href: string }[] = [
+  { labelKey: "nav_about", href: "#about" },
+  { labelKey: "nav_education", href: "#education" },
+  { labelKey: "nav_projects", href: "#projects" },
+  { labelKey: "nav_skills", href: "#skills" },
+  { labelKey: "nav_contact", href: "#contact" },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { lang, setLang, t } = useLang();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -39,22 +42,28 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {navLinkKeys.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className="text-gray-600 hover:text-indigo-500 transition-colors font-medium text-sm"
             >
-              {link.label}
+              {t(link.labelKey)}
             </a>
           ))}
+          <button
+            onClick={() => setLang(lang === "it" ? "en" : "it")}
+            className="text-sm font-semibold text-indigo-500 hover:text-indigo-700 transition-colors border border-indigo-300 hover:border-indigo-500 px-3 py-1.5 rounded-full"
+          >
+            {lang === "it" ? "EN" : "IT"}
+          </button>
           <a
-            href="/MC_CV_ITA.pdf"
+            href={t("cv_file")}
             download
             className="flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-full transition-colors"
           >
             <FiDownload className="w-4 h-4" />
-            Scarica CV
+            {t("nav_cv")}
           </a>
         </div>
 
@@ -71,24 +80,30 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4 shadow-lg">
-          {navLinks.map((link) => (
+          {navLinkKeys.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className="text-gray-700 hover:text-indigo-500 font-medium"
               onClick={() => setMenuOpen(false)}
             >
-              {link.label}
+              {t(link.labelKey)}
             </a>
           ))}
+          <button
+            onClick={() => { setLang(lang === "it" ? "en" : "it"); setMenuOpen(false); }}
+            className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full w-fit"
+          >
+            {lang === "it" ? "EN" : "IT"}
+          </button>
           <a
-            href="/MC_CV_ITA.pdf"
+            href={t("cv_file")}
             download
             className="flex items-center gap-2 bg-indigo-500 text-white font-medium px-4 py-2 rounded-full w-fit"
             onClick={() => setMenuOpen(false)}
           >
             <FiDownload className="w-4 h-4" />
-            Scarica CV
+            {t("nav_cv")}
           </a>
         </div>
       )}

@@ -3,8 +3,11 @@
 import { motion } from "framer-motion";
 import { FiArrowDown, FiMail } from "react-icons/fi";
 import Image from "next/image";
+import { useLang } from "@/context/LanguageContext";
 
 export default function Hero() {
+  const { t } = useLang();
+
   return (
     <section
       id="hero"
@@ -19,7 +22,7 @@ export default function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-3">
-            Data Analyst
+            {t("hero_role")}
           </p>
           <h1
             className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight mb-4"
@@ -30,9 +33,10 @@ export default function Hero() {
             <span className="text-indigo-500">Corbisiero</span>
           </h1>
           <p className="text-xl text-gray-500 max-w-lg mb-8 leading-relaxed">
-            Trasformo i dati grezzi in{" "}
-            <span className="text-emerald-500 font-semibold">storie chiare</span> e{" "}
-            <span className="text-amber-500 font-semibold">decisioni intelligenti</span>.
+            {t("hero_tagline_1")}{" "}
+            <span className="text-emerald-500 font-semibold">{t("hero_tagline_2")}</span>{" "}
+            {t("hero_tagline_3")}{" "}
+            <span className="text-amber-500 font-semibold">{t("hero_tagline_4")}</span>.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
@@ -40,7 +44,7 @@ export default function Hero() {
               href="#projects"
               className="inline-flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-full transition-colors"
             >
-              Vedi i Progetti
+              {t("hero_cta_projects")}
               <FiArrowDown className="w-4 h-4" />
             </a>
             <a
@@ -48,7 +52,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 font-semibold px-6 py-3 rounded-full transition-colors"
             >
               <FiMail className="w-4 h-4" />
-              Contattami
+              {t("hero_cta_contact")}
             </a>
           </div>
         </motion.div>

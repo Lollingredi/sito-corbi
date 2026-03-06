@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { FiMail, FiLinkedin, FiGithub, FiPhone } from "react-icons/fi";
+import { useLang } from "@/context/LanguageContext";
 
 export default function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const { t } = useLang();
 
   return (
     <section id="contact" className="py-24 bg-white">
@@ -20,17 +22,16 @@ export default function Contact() {
           transition={{ duration: 0.6 }}
         >
           <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">
-            Parliamoci
+            {t("contact_label")}
           </p>
           <h2
             className="text-4xl font-bold text-gray-900 mb-4"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Contattami
+            {t("contact_title")}
           </h2>
           <p className="text-gray-500 max-w-lg mx-auto">
-            Hai un progetto in mente o vuoi semplicemente fare due chiacchiere?
-            Sono disponibile per collaborazioni, opportunità lavorative e consulenze.
+            {t("contact_subtitle")}
           </p>
         </motion.div>
 
@@ -49,7 +50,7 @@ export default function Contact() {
               <FiPhone className="w-5 h-5 text-emerald-600" />
             </div>
             <div className="text-center">
-              <div className="font-semibold text-gray-800 text-sm">Telefono</div>
+              <div className="font-semibold text-gray-800 text-sm">{t("contact_phone")}</div>
               <div className="text-gray-500 text-sm mt-1">+39 350 5336746</div>
             </div>
           </a>
@@ -80,7 +81,7 @@ export default function Contact() {
             </div>
             <div className="text-center">
               <div className="font-semibold text-gray-800 text-sm">LinkedIn</div>
-              <div className="text-gray-500 text-sm mt-1">Connettiti con me</div>
+              <div className="text-gray-500 text-sm mt-1">{t("contact_linkedin_sub")}</div>
             </div>
           </a>
 
@@ -96,7 +97,7 @@ export default function Contact() {
             </div>
             <div className="text-center">
               <div className="font-semibold text-gray-800 text-sm">GitHub</div>
-              <div className="text-gray-500 text-sm mt-1">Vedi i miei repo</div>
+              <div className="text-gray-500 text-sm mt-1">{t("contact_github_sub")}</div>
             </div>
           </a>
         </motion.div>

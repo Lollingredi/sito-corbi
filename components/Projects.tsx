@@ -4,40 +4,30 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
-
-interface Project {
-  title: string;
-  description: string;
-  tags: string[];
-  github?: string;
-  live?: string;
-}
-
-const projects: Project[] = [
-  {
-    title: "Analisi delle Vendite Retail",
-    description:
-      "Analisi esplorativa di un dataset di vendite retail per identificare trend stagionali, prodotti più performanti e aree di miglioramento. Dashboard interattiva creata con Tableau.",
-    tags: ["Python", "Pandas", "Tableau", "Excel"],
-  },
-
-  {
-    title: "Dashboard KPI Aziendale",
-    description:
-      "Sviluppo di una dashboard Power BI per il monitoraggio dei KPI aziendali in tempo reale, con integrazione di dati da SQL Server e automazione del reporting mensile.",
-    tags: ["Power BI", "SQL", "DAX", "Excel"],
-  },
-  {
-    title: "Segmentazione Clienti con ML",
-    description:
-      "Progetto di clustering per la segmentazione della base clienti di un e-commerce, utilizzando algoritmi K-Means per identificare profili di acquisto e personalizzare le campagne marketing.",
-    tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib"],
-  },
-];
+import { useLang } from "@/context/LanguageContext";
 
 export default function Projects() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const { t } = useLang();
+
+  const projects = [
+    {
+      title: t("proj1_title"),
+      description: t("proj1_desc"),
+      tags: ["Python", "Pandas", "Tableau", "Excel"],
+    },
+    {
+      title: t("proj2_title"),
+      description: t("proj2_desc"),
+      tags: ["Power BI", "SQL", "DAX", "Excel"],
+    },
+    {
+      title: t("proj3_title"),
+      description: t("proj3_desc"),
+      tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib"],
+    },
+  ];
 
   return (
     <section id="projects" className="py-24 bg-white">
@@ -50,24 +40,23 @@ export default function Projects() {
           className="text-center mb-14"
         >
           <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">
-            Portfolio
+            {t("projects_label")}
           </p>
           <h2
             className="text-4xl font-bold text-gray-900"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            I miei Progetti
+            {t("projects_title")}
           </h2>
           <p className="text-gray-500 mt-4 max-w-xl mx-auto">
-            Una selezione di progetti che mostrano le mie competenze nell&apos;analisi dati,
-            nella visualizzazione e nel machine learning.
+            {t("projects_subtitle")}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project, i) => (
             <motion.div
-              key={project.title}
+              key={i}
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: i * 0.1 }}
@@ -90,34 +79,12 @@ export default function Projects() {
 
               {/* Links */}
               <div className="flex gap-3 mt-5">
-                {project.github ? (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-indigo-500 transition-colors"
-                  >
-                    <FiGithub className="w-4 h-4" /> GitHub
-                  </a>
-                ) : (
-                  <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
-                    <FiGithub className="w-4 h-4" /> GitHub
-                  </span>
-                )}
-                {project.live ? (
-                  <a
-                    href={project.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-sm text-gray-600 hover:text-emerald-500 transition-colors"
-                  >
-                    <FiExternalLink className="w-4 h-4" /> Live
-                  </a>
-                ) : (
-                  <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
-                    <FiExternalLink className="w-4 h-4" /> Live
-                  </span>
-                )}
+                <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
+                  <FiGithub className="w-4 h-4" /> GitHub
+                </span>
+                <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
+                  <FiExternalLink className="w-4 h-4" /> Live
+                </span>
               </div>
             </motion.div>
           ))}

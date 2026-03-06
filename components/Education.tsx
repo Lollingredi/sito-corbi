@@ -4,54 +4,45 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { FiAward, FiBook } from "react-icons/fi";
-
-interface EducationItem {
-  title: string;
-  institution: string;
-  period: string;
-  grade?: string;
-  thesis?: string;
-  courses?: string;
-  note?: string;
-  icon: "award" | "book";
-}
-
-const educationItems: EducationItem[] = [
-  {
-    title: "Google Data Analytics Professional Certificate",
-    institution: "Google",
-    period: "Marzo 2026",
-    note: "Progetto finale: Analisi della fidelizzazione dei clienti per Cyclistic bike-share",
-    icon: "award",
-  },
-  {
-    title: "Doppia Laurea Magistrale in Economics and Data Analysis e International Economic Policy",
-    institution: "Università di Verona & Julius-Maximilians-Universität Würzburg",
-    period: "Ott 2022 – Dic 2024",
-    grade: "110/110 (1.0) – Economics and Data Analysis · 1.6 – International Economic Policy",
-    thesis: "Regional Misallocation: confronto tra Italia e Germania",
-    courses: "Time series and forecasting, International trade and multinational firm",
-    icon: "book",
-  },
-  {
-    title: "Laurea Triennale in Economia e Commercio",
-    institution: "Università Politecnica delle Marche – Ancona",
-    period: "Set 2019 – Ott 2022",
-    grade: "98/110 (1.8)",
-    courses: "Economia degli intermediari finanziari, Demografia",
-    icon: "book",
-  },
-  {
-    title: "Periodo di studio all'estero",
-    institution: "Université de Limoges – Francia",
-    period: "Set 2021 – Gen 2022",
-    icon: "book",
-  },
-];
+import { useLang } from "@/context/LanguageContext";
 
 export default function Education() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const { t } = useLang();
+
+  const educationItems = [
+    {
+      title: t("edu_item0_title"),
+      institution: "Google",
+      period: t("edu_item0_period"),
+      note: t("edu_item0_note"),
+      icon: "award" as const,
+    },
+    {
+      title: t("edu_item1_title"),
+      institution: "Università di Verona & Julius-Maximilians-Universität Würzburg",
+      period: t("edu_item1_period"),
+      grade: "110/110 (1.0) – Economics and Data Analysis · 1.6 – International Economic Policy",
+      thesis: t("edu_item1_thesis"),
+      courses: "Time series and forecasting, International trade and multinational firm",
+      icon: "book" as const,
+    },
+    {
+      title: t("edu_item2_title"),
+      institution: "Università Politecnica delle Marche – Ancona",
+      period: t("edu_item2_period"),
+      grade: "98/110 (1.8)",
+      courses: "Economia degli intermediari finanziari, Demografia",
+      icon: "book" as const,
+    },
+    {
+      title: t("edu_item3_title"),
+      institution: "Université de Limoges – Francia",
+      period: t("edu_item3_period"),
+      icon: "book" as const,
+    },
+  ];
 
   return (
     <section id="education" className="py-24 bg-white">
@@ -64,13 +55,13 @@ export default function Education() {
           className="text-center mb-14"
         >
           <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">
-            Percorso
+            {t("edu_label")}
           </p>
           <h2
             className="text-4xl font-bold text-gray-900"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Istruzione
+            {t("edu_title")}
           </h2>
         </motion.div>
 
@@ -105,23 +96,23 @@ export default function Education() {
                     </span>
                   </div>
                   <p className="text-sm text-indigo-600 font-medium mb-2">{item.institution}</p>
-                  {item.grade && (
+                  {"grade" in item && item.grade && (
                     <p className="text-sm text-gray-600 mb-1">
-                      <span className="font-medium text-gray-700">Voto:</span> {item.grade}
+                      <span className="font-medium text-gray-700">{t("edu_grade")}</span> {item.grade}
                     </p>
                   )}
-                  {item.thesis && (
+                  {"thesis" in item && item.thesis && (
                     <p className="text-sm text-gray-600 mb-1">
-                      <span className="font-medium text-gray-700">Tesi:</span>{" "}
+                      <span className="font-medium text-gray-700">{t("edu_thesis")}</span>{" "}
                       <em>{item.thesis}</em>
                     </p>
                   )}
-                  {item.courses && (
+                  {"courses" in item && item.courses && (
                     <p className="text-sm text-gray-500">
-                      <span className="font-medium text-gray-600">Corsi rilevanti:</span> {item.courses}
+                      <span className="font-medium text-gray-600">{t("edu_courses")}</span> {item.courses}
                     </p>
                   )}
-                  {item.note && (
+                  {"note" in item && item.note && (
                     <p className="text-sm text-gray-500">{item.note}</p>
                   )}
                 </div>

@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import { useLang } from "@/context/LanguageContext";
 
 export default function About() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const { t } = useLang();
 
   return (
     <section id="about" className="py-24 bg-gray-50">
@@ -35,38 +37,38 @@ export default function About() {
           {/* Text */}
           <div className="flex-1">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">
-              Chi sono
+              {t("about_label")}
             </p>
             <h2
               className="text-4xl font-bold text-gray-900 mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Un po&apos; di me
+              {t("about_title")}
             </h2>
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Sono <span className="font-medium text-gray-800">Michele Corbisiero</span>, Data Analyst alle prime fasi di carriera con{" "}
-                <span className="text-indigo-500 font-medium">doppia laurea magistrale in Economia e Analisi dei Dati</span>.
+                {t("about_p1_pre")} <span className="font-medium text-gray-800">Michele Corbisiero</span>
+                {t("about_p1_post")}{" "}
+                <span className="text-indigo-500 font-medium">{t("about_p1_degree")}</span>.
               </p>
               <p>
-                Ho maturato esperienza pratica in progetti accademici incentrati sui dati,
-                con competenze operative in{" "}
-                <span className="font-medium text-gray-800">SQL</span> e nelle attività di pulizia,
-                manipolazione, visualizzazione dei dati e analisi orientata al business.
+                {t("about_p2")}{" "}
+                <span className="font-medium text-gray-800">{t("about_p2_skill")}</span>{" "}
+                {t("about_p2_post")}
               </p>
               <p>
-                Utilizzo strumenti come{" "}
-                <span className="font-medium text-gray-800">Python, R, SQL e Tableau</span> per
-                trasformare dati grezzi in insight chiari e utili alle decisioni strategiche.
+                {t("about_p3_pre")}{" "}
+                <span className="font-medium text-gray-800">{t("about_p3_tools")}</span>{" "}
+                {t("about_p3_post")}
               </p>
             </div>
 
             {/* Quick facts */}
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
               {[
-                { label: "Voto Magistrale", value: "110/110" },
-                { label: "Lingue", value: "4" },
-                { label: "Certificazioni", value: "Google" },
+                { label: t("about_fact1_label"), value: "110/110" },
+                { label: t("about_fact2_label"), value: "4" },
+                { label: t("about_fact3_label"), value: "Google" },
               ].map((fact) => (
                 <div key={fact.label} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
                   <div className="text-2xl font-bold text-indigo-500">{fact.value}</div>
