@@ -12,7 +12,7 @@ export default function About() {
   const { t } = useLang();
 
   return (
-    <section id="about" className="py-24 bg-gray-50">
+    <section id="about" className="py-24 bg-gray-50 dark:bg-gray-800">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           ref={ref}
@@ -40,25 +40,25 @@ export default function About() {
               {t("about_label")}
             </p>
             <h2
-              className="text-4xl font-bold text-gray-900 mb-6"
+              className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {t("about_title")}
             </h2>
-            <div className="space-y-4 text-gray-600 leading-relaxed">
+            <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
               <p>
-                {t("about_p1_pre")} <span className="font-medium text-gray-800">Michele Corbisiero</span>
+                {t("about_p1_pre")} <span className="font-medium text-gray-800 dark:text-gray-200">Michele Corbisiero</span>
                 {t("about_p1_post")}{" "}
                 <span className="text-indigo-500 font-medium">{t("about_p1_degree")}</span>.
               </p>
               <p>
                 {t("about_p2")}{" "}
-                <span className="font-medium text-gray-800">{t("about_p2_skill")}</span>{" "}
+                <span className="font-medium text-gray-800 dark:text-gray-200">{t("about_p2_skill")}</span>{" "}
                 {t("about_p2_post")}
               </p>
               <p>
                 {t("about_p3_pre")}{" "}
-                <span className="font-medium text-gray-800">{t("about_p3_tools")}</span>{" "}
+                <span className="font-medium text-gray-800 dark:text-gray-200">{t("about_p3_tools")}</span>{" "}
                 {t("about_p3_post")}
               </p>
             </div>
@@ -70,9 +70,9 @@ export default function About() {
                 { label: t("about_fact2_label"), value: "4" },
                 { label: t("about_fact3_label"), value: "Google" },
               ].map((fact) => (
-                <div key={fact.label} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
+                <div key={fact.label} className="bg-white dark:bg-gray-700 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-600 text-center">
                   <div className="text-2xl font-bold text-indigo-500">{fact.value}</div>
-                  <div className="text-xs text-gray-500 mt-1">{fact.label}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">{fact.label}</div>
                 </div>
               ))}
             </div>

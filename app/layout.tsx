@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import HtmlLang from "@/components/HtmlLang";
 
 export const metadata: Metadata = {
@@ -25,10 +26,12 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <LanguageProvider>
-          <HtmlLang />
-          {children}
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <HtmlLang />
+            {children}
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -30,7 +30,7 @@ export default function Projects() {
   ];
 
   return (
-    <section id="projects" className="py-24 bg-white">
+    <section id="projects" className="py-24 bg-white dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           ref={ref}
@@ -43,12 +43,12 @@ export default function Projects() {
             {t("projects_label")}
           </p>
           <h2
-            className="text-4xl font-bold text-gray-900"
+            className="text-4xl font-bold text-gray-900 dark:text-gray-100"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {t("projects_title")}
           </h2>
-          <p className="text-gray-500 mt-4 max-w-xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-xl mx-auto">
             {t("projects_subtitle")}
           </p>
         </motion.div>
@@ -60,17 +60,17 @@ export default function Projects() {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
-              <h3 className="text-lg font-bold text-gray-900 mb-2">{project.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed flex-1">{project.description}</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">{project.title}</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed flex-1">{project.description}</p>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mt-4">
                 {project.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs font-medium bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full"
+                    className="text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full"
                   >
                     {tag}
                   </span>
@@ -79,10 +79,10 @@ export default function Projects() {
 
               {/* Links */}
               <div className="flex gap-3 mt-5">
-                <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
+                <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
                   <FiGithub className="w-4 h-4" /> GitHub
                 </span>
-                <span className="flex items-center gap-1 text-sm text-gray-300 cursor-not-allowed">
+                <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
                   <FiExternalLink className="w-4 h-4" /> Live
                 </span>
               </div>

@@ -12,7 +12,7 @@ export default function Resume() {
   const { t } = useLang();
 
   return (
-    <section id="resume" className="py-20 bg-indigo-500">
+    <section id="resume" className="py-20 bg-indigo-500 dark:bg-indigo-800">
       <motion.div
         ref={ref}
         className="max-w-4xl mx-auto px-4 sm:px-6 text-center"
@@ -32,7 +32,7 @@ export default function Resume() {
         <a
           href={t("cv_file")}
           download
-          className="inline-flex items-center gap-3 bg-white text-indigo-600 font-bold px-8 py-4 rounded-full hover:bg-indigo-50 transition-colors shadow-lg text-lg"
+          className="inline-flex items-center gap-3 bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 font-bold px-8 py-4 rounded-full hover:bg-indigo-50 dark:hover:bg-gray-800 transition-colors shadow-lg text-lg"
         >
           <FiDownload className="w-5 h-5" />
           {t("resume_cta")}

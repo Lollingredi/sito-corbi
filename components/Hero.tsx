@@ -11,7 +11,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="min-h-screen flex items-center justify-center bg-white pt-16"
+      className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 pt-16"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 flex flex-col-reverse md:flex-row items-center gap-12">
         {/* Text content */}
@@ -25,14 +25,14 @@ export default function Hero() {
             {t("hero_role")}
           </p>
           <h1
-            className="text-5xl sm:text-6xl font-bold text-gray-900 leading-tight mb-4"
+            className="text-5xl sm:text-6xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-4"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Michele
             <br />
             <span className="text-indigo-500">Corbisiero</span>
           </h1>
-          <p className="text-xl text-gray-500 max-w-lg mb-8 leading-relaxed">
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-lg mb-8 leading-relaxed">
             {t("hero_tagline_1")}{" "}
             <span className="text-emerald-500 font-semibold">{t("hero_tagline_2")}</span>{" "}
             {t("hero_tagline_3")}{" "}
@@ -49,7 +49,7 @@ export default function Hero() {
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 font-semibold px-6 py-3 rounded-full transition-colors"
+              className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 font-semibold px-6 py-3 rounded-full transition-colors"
             >
               <FiMail className="w-4 h-4" />
               {t("hero_cta_contact")}

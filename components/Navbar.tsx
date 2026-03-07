@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiMenu, FiX, FiDownload } from "react-icons/fi";
+import { FiMenu, FiX, FiDownload, FiSun, FiMoon } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 import { TranslationKey } from "@/lib/translations";
 
 const navLinkKeys: { labelKey: TranslationKey; href: string }[] = [
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, t } = useLang();
+  const { dark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -27,33 +29,44 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-md" : "bg-transparent"
+        scrolled
+          ? "bg-white dark:bg-gray-900 shadow-md dark:shadow-gray-900"
+          : "bg-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <a
           href="#hero"
-          className="text-lg font-bold text-gray-900"
+          className="text-lg font-bold text-gray-900 dark:text-gray-100"
           style={{ fontFamily: "var(--font-display)" }}
         >
           Michele Corbisiero
         </a>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {navLinkKeys.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-gray-600 hover:text-indigo-500 transition-colors font-medium text-sm"
+              className="text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors font-medium text-sm"
             >
               {t(link.labelKey)}
             </a>
           ))}
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
+          </button>
+          {/* Language toggle */}
           <button
             onClick={() => setLang(lang === "it" ? "en" : "it")}
-            className="text-sm font-semibold text-indigo-500 hover:text-indigo-700 transition-colors border border-indigo-300 hover:border-indigo-500 px-3 py-1.5 rounded-full"
+            className="text-sm font-semibold text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors border border-indigo-300 hover:border-indigo-500 px-3 py-1.5 rounded-full"
           >
             {lang === "it" ? "EN" : "IT"}
           </button>
@@ -67,24 +80,33 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden text-gray-700 p-1"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
-        >
-          {menuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-        </button>
+        {/* Mobile right controls */}
+        <div className="md:hidden flex items-center gap-2">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
+          </button>
+          <button
+            className="text-gray-700 dark:text-gray-300 p-1"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
+          >
+            {menuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4 shadow-lg">
+        <div className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700 px-4 py-4 flex flex-col gap-4 shadow-lg">
           {navLinkKeys.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-gray-700 hover:text-indigo-500 font-medium"
+              className="text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 font-medium"
               onClick={() => setMenuOpen(false)}
             >
               {t(link.labelKey)}

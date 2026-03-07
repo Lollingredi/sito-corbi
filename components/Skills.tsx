@@ -45,7 +45,7 @@ export default function Skills() {
   ];
 
   return (
-    <section id="skills" className="py-24 bg-gray-50">
+    <section id="skills" className="py-24 bg-gray-50 dark:bg-gray-800">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
           ref={ref}
@@ -58,12 +58,12 @@ export default function Skills() {
             {t("skills_label")}
           </p>
           <h2
-            className="text-4xl font-bold text-gray-900"
+            className="text-4xl font-bold text-gray-900 dark:text-gray-100"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {t("skills_title")}
           </h2>
-          <p className="text-gray-500 mt-4 max-w-xl mx-auto">
+          <p className="text-gray-500 dark:text-gray-400 mt-4 max-w-xl mx-auto">
             {t("skills_subtitle")}
           </p>
         </motion.div>
@@ -75,22 +75,22 @@ export default function Skills() {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: catIdx * 0.15 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+              className="bg-white dark:bg-gray-700 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-600"
             >
-              <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-5">
+              <h3 className="text-sm font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-5">
                 {cat.category}
               </h3>
               <div className="space-y-3">
                 {cat.skills.map((skill, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors"
+                    className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   >
                     <span className={`text-2xl mt-0.5 flex-shrink-0 ${skill.color}`}>{skill.icon}</span>
                     <div>
-                      <div className="font-medium text-gray-700 text-sm">{skill.name}</div>
+                      <div className="font-medium text-gray-700 dark:text-gray-200 text-sm">{skill.name}</div>
                       {"sub" in skill && skill.sub && (
-                        <div className="text-xs text-gray-400 mt-0.5">{skill.sub}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{skill.sub}</div>
                       )}
                     </div>
                   </div>
