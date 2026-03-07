@@ -83,21 +83,8 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile right: lang | theme | hamburger */}
-        <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={() => setLang(lang === "it" ? "en" : "it")}
-            className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full"
-          >
-            {lang === "it" ? "EN" : "IT"}
-          </button>
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
-          </button>
+        {/* Mobile right: hamburger only */}
+        <div className="md:hidden flex items-center">
           <button
             className="text-gray-700 dark:text-gray-300 p-1"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -128,15 +115,32 @@ export default function Navbar() {
                 {t(link.labelKey)}
               </a>
             ))}
-            <a
-              href={t("cv_file")}
-              download
-              className="flex items-center gap-2 bg-indigo-500 text-white font-medium px-4 py-2 rounded-full w-fit"
-              onClick={() => setMenuOpen(false)}
-            >
-              <FiDownload className="w-4 h-4" />
-              {t("nav_cv")}
-            </a>
+            <div className="flex items-center justify-between">
+              <a
+                href={t("cv_file")}
+                download
+                className="flex items-center gap-2 bg-indigo-500 text-white font-medium px-4 py-2 rounded-full w-fit"
+                onClick={() => setMenuOpen(false)}
+              >
+                <FiDownload className="w-4 h-4" />
+                {t("nav_cv")}
+              </a>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setLang(lang === "it" ? "en" : "it")}
+                  className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full"
+                >
+                  {lang === "it" ? "EN" : "IT"}
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Toggle theme"
+                >
+                  {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
