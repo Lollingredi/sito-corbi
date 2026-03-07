@@ -35,14 +35,32 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <a
-          href="#hero"
-          className="text-lg font-bold text-gray-900 dark:text-gray-100"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Michele Corbisiero
-        </a>
+        {/* Left: toggles + logo */}
+        <div className="flex items-center gap-3">
+          {/* Theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
+          </button>
+          {/* Language toggle */}
+          <button
+            onClick={() => setLang(lang === "it" ? "en" : "it")}
+            className="hidden md:block text-sm font-semibold text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors border border-indigo-300 hover:border-indigo-500 px-3 py-1.5 rounded-full"
+          >
+            {lang === "it" ? "EN" : "IT"}
+          </button>
+          {/* Logo */}
+          <a
+            href="#hero"
+            className="text-lg font-bold text-gray-900 dark:text-gray-100"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Michele Corbisiero
+          </a>
+        </div>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6">
@@ -55,21 +73,6 @@ export default function Navbar() {
               {t(link.labelKey)}
             </a>
           ))}
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
-          </button>
-          {/* Language toggle */}
-          <button
-            onClick={() => setLang(lang === "it" ? "en" : "it")}
-            className="text-sm font-semibold text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors border border-indigo-300 hover:border-indigo-500 px-3 py-1.5 rounded-full"
-          >
-            {lang === "it" ? "EN" : "IT"}
-          </button>
           <a
             href={t("cv_file")}
             download
@@ -80,23 +83,14 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile right controls */}
-        <div className="md:hidden flex items-center gap-2">
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
-          </button>
-          <button
-            className="text-gray-700 dark:text-gray-300 p-1"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menu"
-          >
-            {menuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
-          </button>
-        </div>
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden text-gray-700 dark:text-gray-300 p-1"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menu"
+        >
+          {menuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
+        </button>
       </div>
 
       {/* Mobile menu */}
@@ -113,7 +107,7 @@ export default function Navbar() {
             </a>
           ))}
           <button
-            onClick={() => { setLang(lang === "it" ? "en" : "it"); setMenuOpen(false); }}
+            onClick={() => { setLang(lang === "it" ? "en" : "it"); }}
             className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full w-fit"
           >
             {lang === "it" ? "EN" : "IT"}
