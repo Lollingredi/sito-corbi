@@ -87,7 +87,7 @@ export default function Contact() {
 
           {/* GitHub */}
           <a
-            href="#"
+            href="https://github.com/corbisieromichele00"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-3 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all group"

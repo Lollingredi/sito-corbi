@@ -39,7 +39,7 @@ export default function Footer() {
             <FiLinkedin className="w-5 h-5" />
           </a>
           <a
-            href="#"
+            href="https://github.com/corbisieromichele00"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors"
