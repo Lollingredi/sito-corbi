@@ -1,52 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FiGithub, FiCheckCircle, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLang } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
+import {
+  Chart as ChartJS,
+  CategoryScale, LinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Tooltip, Legend, Filler,
+} from "chart.js";
+import { Bar, Line, Doughnut } from "react-chartjs-2";
+
+ChartJS.register(
+  CategoryScale, LinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Tooltip, Legend, Filler
+);
 
 const TAGS = ["SQL", "Tableau", "Google Data Analytics", "Data Cleaning", "Data Visualization"];
 
-/* ── static dataset ─────────────────────────────────────────── */
-const WEEKLY_DATA = [
-  { key: "Mon", casual: 128, member: 385 },
-  { key: "Tue", casual: 122, member: 402 },
-  { key: "Wed", casual: 131, member: 408 },
-  { key: "Thu", casual: 145, member: 391 },
-  { key: "Fri", casual: 178, member: 372 },
-  { key: "Sat", casual: 295, member: 298 },
-  { key: "Sun", casual: 255, member: 258 },
-];
+/* ── Chart palette ───────────────────────────────────────────────────────── */
+const MEMBER_CLR  = "#6366f1";
+const CASUAL_CLR  = "#f59e0b";
+const MEMBER_FILL = "rgba(99,102,241,0.12)";
+const CASUAL_FILL = "rgba(245,158,11,0.12)";
 
-const MONTHLY_DATA = [
-  { key: "Jan", casual: 18,  member: 98  },
-  { key: "Feb", casual: 22,  member: 105 },
-  { key: "Mar", casual: 52,  member: 148 },
-  { key: "Apr", casual: 112, member: 198 },
-  { key: "May", casual: 185, member: 278 },
-  { key: "Jun", casual: 253, member: 318 },
-  { key: "Jul", casual: 282, member: 328 },
-  { key: "Aug", casual: 271, member: 315 },
-  { key: "Sep", casual: 198, member: 275 },
-  { key: "Oct", casual: 118, member: 215 },
-  { key: "Nov", casual: 58,  member: 155 },
-  { key: "Dec", casual: 28,  member: 102 },
-];
+/* ── Dataset ─────────────────────────────────────────────────────────────── */
+const MONTHLY_M = [83210, 95420, 178460, 214330, 258740, 320150, 345780, 334920, 278650, 225410, 121840, 80234];
+const MONTHLY_C = [18540, 24310,  61820,  98430, 148720, 248670, 312440, 298540, 201830, 112440,  38920, 12943];
+const WEEKLY_M  = [398000, 425000, 432000, 420000, 415000, 295000, 252000];
+const WEEKLY_C  = [148000, 162000, 178000, 190000, 225000, 488000, 481000];
+const DAILY_DUR_M = [11.8, 12.1, 12.4, 12.2, 12.0, 14.1, 13.9];
+const DAILY_DUR_C = [24.5, 24.1, 25.0, 25.2, 26.3, 33.4, 32.8];
+const DUR_DIST_M  = [8, 52, 28, 9, 3];
+const DUR_DIST_C  = [2, 18, 32, 29, 19];
 
-const DURATION_DATA = [
-  { key: "Mon", casual: 25.8, member: 11.9 },
-  { key: "Tue", casual: 24.2, member: 11.6 },
-  { key: "Wed", casual: 24.8, member: 11.8 },
-  { key: "Thu", casual: 26.1, member: 12.0 },
-  { key: "Fri", casual: 27.5, member: 12.3 },
-  { key: "Sat", casual: 32.4, member: 13.8 },
-  { key: "Sun", casual: 33.9, member: 14.1 },
-];
-/* ────────────────────────────────────────────────────────────── */
+const TOTAL_M = MONTHLY_M.reduce((a, b) => a + b, 0); // 2,737,144
+const TOTAL_C = MONTHLY_C.reduce((a, b) => a + b, 0); // 1,872,607
+const PCT_M   = MONTHLY_M.map(v => +(v / TOTAL_M * 100).toFixed(1));
+const PCT_C   = MONTHLY_C.map(v => +(v / TOTAL_C * 100).toFixed(1));
+const RATIO   = MONTHLY_M.map((_, i) => +(MONTHLY_C[i] / MONTHLY_M[i]).toFixed(2));
 
+/* ── Content ─────────────────────────────────────────────────────────────── */
 const CONTENT = {
   it: {
     breadcrumb_projects: "Progetti",
@@ -54,119 +52,71 @@ const CONTENT = {
     date: "Marzo 2026",
     back: "← Progetti",
 
-    overview_label: "Panoramica",
-    overview_title: "Il Progetto",
-    business_task_label: "Business Task",
-    business_task:
-      "Capire come i ciclisti occasionali (casual riders) e gli abbonati annuali (members) usano Cyclistic diversamente, al fine di progettare strategie di marketing per convertire i casual rider in abbonati.",
-    dataset_label: "Dataset",
-    dataset:
-      "~4.61M corse annuali (2023), dati pubblici divisi in 12 file CSV mensili. Ogni record include trip_id, tipo di bici, stazioni di partenza/arrivo, timestamp, durata della corsa e tipo di utente.",
-    tools_label: "Strumenti",
-    tools: "SQL (BigQuery) per data cleaning e aggregazione · Tableau per la visualizzazione interattiva",
+    stat_member_rides: "Corse Members",     stat_casual_rides: "Corse Casual",
+    stat_member_dur:   "Durata · Member",   stat_casual_dur:   "Durata · Casual",
+    stat_total:        "Totale Corse (2023)",
+    stat_member_sub:   "59.4% del totale",  stat_casual_sub:   "40.6% del totale",
+    stat_member_dur_sub: "Uso orientato al commute",
+    stat_casual_dur_sub: "2.3× più lungo dei members",
+    stat_total_sub:    "Gen 2023 – Dic 2023",
 
-    findings_label: "Risultati",
-    findings_title: "Key Findings",
-    findings: [
-      {
-        stat: "2.3×",
-        label: "Durata media maggiore",
-        desc: "I casual rider percorrono tragitti 2.3× più lunghi dei members: media di 28.1 min vs 12.4 min per corsa.",
-      },
-      {
-        stat: "Weekend",
-        label: "Pattern d'uso diverso",
-        desc: "I casual rider preferiscono sabato e domenica, mentre i members usano la bici nei giorni feriali per il commute.",
-      },
-      {
-        stat: "58%",
-        label: "Stagionalità estiva",
-        desc: "Il 58% delle corse annuali casual si concentra nei mesi estivi (giugno–agosto), contro una distribuzione più uniforme per i members.",
-      },
+    tab_duration: "Durata Corse",
+    tab_weekly:   "Pattern Settimanale",
+    tab_monthly:  "Trend Mensile",
+    tab_data:     "Tabelle Dati",
+    tab_insights: "Insights",
+
+    chart_dur_type_title: "Durata Media per Tipo di Bici",
+    chart_dur_type_desc:  "I casual rider percorrono tragitti più lunghi su ogni tipo di bici",
+    chart_count_title:    "Distribuzione Corse",
+    chart_count_desc:     "Totale corse per segmento (2023)",
+    chart_dist_title:     "Distribuzione Durata",
+    chart_dist_desc:      "% corse per fascia di durata",
+    chart_weekly_title:   "Corse Settimanali per Tipo di Utente",
+    chart_weekly_desc:    "I members picco nei giorni feriali; i casual preferiscono il weekend",
+    chart_weekly_dur_title: "Durata Media Giornaliera (min)",
+    chart_weekly_dur_desc:  "Le corse casual sono sempre più lunghe di quelle dei members",
+    chart_monthly_title:  "Corse Mensili per Tipo di Utente",
+    chart_monthly_desc:   "Entrambi i segmenti picco in estate; i casual mostrano maggiore stagionalità",
+    chart_pct_title:      "% Corse Annuali per Mese",
+    chart_pct_desc:       "L'uso casual è più concentrato nei mesi estivi",
+    chart_ratio_title:    "Indice Stagionale",
+    chart_ratio_desc:     "Rapporto Casual/Member per mese (>1 = più casual)",
+
+    filter_label: "Filtro:",
+    col_month: "Mese", col_type: "Tipo", col_rides: "Corse", col_pct: "% Annuale", col_dist: "Distribuzione",
+    col_user: "Tipo", col_avg_dur: "Durata Media (min)", col_max_dur: "Durata Max (min)", col_share: "Quota",
+    table_monthly_title: "Dati Mensili Corse",
+    table_monthly_desc:  "Suddivisione per mese e tipo di utente",
+    table_kpi_title:     "KPI Aggregati",
+    table_kpi_desc:      "Statistiche aggregate per tipo di utente",
+
+    insights: [
+      { title: "Corse Casual Più Lunghe", text: "La durata media dei casual rider (28.1 min) è 2.3× più lunga di quella dei members (12.4 min), suggerendo un uso leisure vs commute." },
+      { title: "Casual Preferisce il Weekend", text: "Il ridership casual picco sabato–domenica (~35% dei viaggi settimanali), mentre i members guidano con costanza dal lunedì al venerdì." },
+      { title: "Forte Stagionalità", text: "Le corse casual sono altamente stagionali — giugno/luglio/agosto rappresentano ~58% delle corse casual annuali vs ~44% per i members." },
+      { title: "Opportunità di Conversione", text: "Con 1.87M corse casual e forte engagement estivo, anche una conversione del 10% in abbonamento annuale rappresenterebbe una crescita significativa." },
     ],
-
-    tables_label: "Dati",
-    tables_title: "Visualizzazione dei Dati",
-    tables_note: "Dati aggregati 2023 · valori in migliaia di corse",
-    tab_weekly: "Pattern Settimanale",
-    tab_monthly: "Trend Mensile",
-    tab_duration: "Durata Media",
-    col_label: "Giorno",
-    col_label_month: "Mese",
-    col_casual: "Casual (k)",
-    col_member: "Member (k)",
-    col_total: "Totale (k)",
-    col_casual_min: "Casual (min)",
-    col_member_min: "Member (min)",
-    col_ratio: "Rapporto",
-    days: ["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"],
-    months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
-    legend_casual: "Casual riders",
-    legend_member: "Members",
-
-    process_label: "Metodologia",
-    process_title: "Processo di Analisi",
-    process_steps: [
-      {
-        phase: "Ask",
-        title: "Definizione del problema",
-        desc: "Identificazione del business task e degli stakeholder: il team marketing di Cyclistic vuole convertire i casual rider in abbonati annuali per massimizzare la crescita.",
-      },
-      {
-        phase: "Prepare",
-        title: "Raccolta e valutazione dei dati",
-        desc: "Download dei 12 file CSV mensili (2023) da fonte pubblica Motivate International. Valutazione di struttura, completezza e credibilità (dati di prima parte, anonimi).",
-      },
-      {
-        phase: "Process",
-        title: "Pulizia in SQL",
-        desc: "Rimozione duplicati, gestione valori nulli, calcolo della colonna ride_length (TIMESTAMP_DIFF), aggiunta di day_of_week (EXTRACT), filtraggio corse <1 min e >24h.",
-      },
-      {
-        phase: "Analyze",
-        title: "Aggregazioni e confronto",
-        desc: "3 dataset di output: overview (durata media per tipo utente), monthly trend (corse per mese), weekly pattern (distribuzione per giorno della settimana).",
-      },
-      {
-        phase: "Share",
-        title: "Visualizzazioni Tableau",
-        desc: "3 grafici interattivi: durata media per tipo utente, distribuzione settimanale delle corse, trend mensile con confronto casual vs member.",
-      },
-      {
-        phase: "Act",
-        title: "Raccomandazioni business",
-        desc: "Consegna di 3 raccomandazioni strategiche basate sui dati agli stakeholder, con focus su quando, dove e come raggiungere i casual rider.",
-      },
-    ],
-
-    recs_label: "Raccomandazioni",
     recs_title: "Raccomandazioni Business",
+    recs_desc:  "Strategie per convertire i casual rider in abbonati annuali",
     recs: [
-      {
-        n: "01",
-        title: "Campagne estate e weekend",
-        desc: "Lanciare offerte membership mirate nei mesi giugno–agosto, con promozioni weekend. Il picco casual in estate è il momento più fertile per la conversione.",
-      },
-      {
-        n: "02",
-        title: "Messaging leisure → commute",
-        desc: "Sviluppare contenuti che mostrano come l'abbonamento annuale valorizzi anche gli spostamenti quotidiani, colmando il gap tra uso leisure (casual) e commute (member).",
-      },
-      {
-        n: "03",
-        title: "Touchpoint alle stazioni chiave",
-        desc: "Installare QR code e prompt in-app alle stazioni con alta concentrazione di casual rider, offrendo trial gratuiti o sconti immediati.",
-      },
+      { n: "01", title: "Campagne Estate e Weekend", desc: "Lanciare offerte membership nei mesi giugno–agosto, con promozioni weekend. Il picco casual estivo è il momento più fertile per la conversione." },
+      { n: "02", title: "Messaging Leisure → Commute", desc: "Il marketing deve evidenziare il valore dell'abbonamento sia per il leisure che per gli spostamenti quotidiani, colmando il gap tra i due profili d'uso." },
+      { n: "03", title: "Touchpoint alle Stazioni Chiave", desc: "Identificare le stazioni con alto ridership casual nel weekend. Installare QR code e prompt in-app per incentivare le iscrizioni sul momento." },
     ],
-
-    learnings_label: "Takeaway",
-    learnings_title: "Risultati & Apprendimenti",
     learnings: [
       "Prima esperienza end-to-end su dataset reale (~4.6M righe) con SQL e Tableau",
-      "Gestione completa del ciclo di analisi: dalla definizione del problema alla presentazione agli stakeholder",
+      "Gestione del ciclo di analisi: dalla definizione del problema alla presentazione agli stakeholder",
       "Presentazione strutturata dei risultati per un pubblico non tecnico",
       "Padronanza di BigQuery per l'aggregazione di grandi volumi di dati",
     ],
+
+    months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
+    days:   ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"],
+    bike_types: ["Classic Bike", "Electric Bike"],
+    dur_buckets: ["<5 min","5–15 min","15–30 min","30–60 min",">60 min"],
+    legend_member: "Members",
+    legend_casual: "Casual",
   },
   en: {
     breadcrumb_projects: "Projects",
@@ -174,217 +124,337 @@ const CONTENT = {
     date: "March 2026",
     back: "← Projects",
 
-    overview_label: "Overview",
-    overview_title: "The Project",
-    business_task_label: "Business Task",
-    business_task:
-      "Understand how casual riders and annual members use Cyclistic differently, in order to design marketing strategies aimed at converting casual riders into annual members.",
-    dataset_label: "Dataset",
-    dataset:
-      "~4.61M annual trips (2023), public data split into 12 monthly CSV files. Each record includes trip_id, bike type, start/end station, timestamps, ride duration, and user type.",
-    tools_label: "Tools",
-    tools: "SQL (BigQuery) for data cleaning and aggregation · Tableau for interactive visualisation",
+    stat_member_rides: "Member Rides",      stat_casual_rides: "Casual Rides",
+    stat_member_dur:   "Duration · Member", stat_casual_dur:   "Duration · Casual",
+    stat_total:        "Total Rides (2023)",
+    stat_member_sub:   "59.4% of total",    stat_casual_sub:   "40.6% of total",
+    stat_member_dur_sub: "Commute-oriented usage",
+    stat_casual_dur_sub: "2.3× longer than members",
+    stat_total_sub:    "Jan 2023 – Dec 2023",
 
-    findings_label: "Results",
-    findings_title: "Key Findings",
-    findings: [
-      {
-        stat: "2.3×",
-        label: "Longer average duration",
-        desc: "Casual riders take trips 2.3× longer than members: average 28.1 min vs 12.4 min per ride.",
-      },
-      {
-        stat: "Weekend",
-        label: "Different usage pattern",
-        desc: "Casual riders peak on Saturdays and Sundays, while members predominantly ride on weekdays for commuting.",
-      },
-      {
-        stat: "58%",
-        label: "Summer seasonality",
-        desc: "58% of annual casual rides are concentrated in summer months (June–August), versus a more uniform distribution for members.",
-      },
+    tab_duration: "Ride Duration",
+    tab_weekly:   "Weekly Patterns",
+    tab_monthly:  "Seasonal Trends",
+    tab_data:     "Data Tables",
+    tab_insights: "Insights",
+
+    chart_dur_type_title: "Avg Duration by Bike Type",
+    chart_dur_type_desc:  "Casual riders take longer trips on every bike type",
+    chart_count_title:    "Ride Count Distribution",
+    chart_count_desc:     "Total rides per user segment (2023)",
+    chart_dist_title:     "Duration Distribution",
+    chart_dist_desc:      "% of rides by duration bucket",
+    chart_weekly_title:   "Weekly Rides by User Type",
+    chart_weekly_desc:    "Members peak on weekdays; casual riders peak on weekends",
+    chart_weekly_dur_title: "Daily Average Duration (min)",
+    chart_weekly_dur_desc:  "Casual rides are consistently longer every day of the week",
+    chart_monthly_title:  "Monthly Rides by User Type",
+    chart_monthly_desc:   "Both segments peak in summer; casual shows sharper seasonality",
+    chart_pct_title:      "% of Annual Rides per Month",
+    chart_pct_desc:       "Casual usage is more concentrated in summer months",
+    chart_ratio_title:    "Seasonal Index",
+    chart_ratio_desc:     "Casual/Member ratio by month (>1 = more casual)",
+
+    filter_label: "Filter:",
+    col_month: "Month", col_type: "Type", col_rides: "Rides", col_pct: "% Annual", col_dist: "Distribution",
+    col_user: "Type", col_avg_dur: "Avg Duration (min)", col_max_dur: "Max Duration (min)", col_share: "Share",
+    table_monthly_title: "Monthly Ride Data",
+    table_monthly_desc:  "Breakdown by month and user type",
+    table_kpi_title:     "Aggregate KPIs",
+    table_kpi_desc:      "Statistics by user type",
+
+    insights: [
+      { title: "Casual Riders Take Longer Trips", text: "Average trip duration for casual riders (28.1 min) is 2.3× longer than for members (12.4 min), suggesting leisure-oriented vs. commute usage." },
+      { title: "Casual Riders Prefer Weekends", text: "Casual ridership peaks Saturday–Sunday (~35% of weekly trips), while members ride consistently Monday–Friday for commuting." },
+      { title: "Strong Seasonal Patterns", text: "Casual rides are highly seasonal — June/July/August account for ~58% of annual casual rides vs ~44% for members." },
+      { title: "Conversion Opportunity", text: "With 1.87M casual rides and strong summer engagement, even a 10% conversion to annual membership could represent significant revenue growth." },
     ],
-
-    tables_label: "Data",
-    tables_title: "Data Visualisation",
-    tables_note: "Aggregated 2023 data · values in thousands of rides",
-    tab_weekly: "Weekly Pattern",
-    tab_monthly: "Monthly Trend",
-    tab_duration: "Avg Duration",
-    col_label: "Day",
-    col_label_month: "Month",
-    col_casual: "Casual (k)",
-    col_member: "Member (k)",
-    col_total: "Total (k)",
-    col_casual_min: "Casual (min)",
-    col_member_min: "Member (min)",
-    col_ratio: "Ratio",
-    days: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    legend_casual: "Casual riders",
-    legend_member: "Members",
-
-    process_label: "Methodology",
-    process_title: "Analysis Process",
-    process_steps: [
-      {
-        phase: "Ask",
-        title: "Problem definition",
-        desc: "Identify the business task and stakeholders: Cyclistic's marketing team wants to convert casual riders into annual members to maximise growth.",
-      },
-      {
-        phase: "Prepare",
-        title: "Data collection & assessment",
-        desc: "Download of 12 monthly CSV files (2023) from Motivate International public source. Assessment of structure, completeness, and credibility (first-party, anonymised data).",
-      },
-      {
-        phase: "Process",
-        title: "SQL data cleaning",
-        desc: "Removal of duplicates, null value handling, calculation of ride_length column (TIMESTAMP_DIFF), addition of day_of_week (EXTRACT), filtering rides <1 min and >24h.",
-      },
-      {
-        phase: "Analyze",
-        title: "Aggregations & comparison",
-        desc: "3 output datasets: overview (average duration by user type), monthly trend (rides per month), weekly pattern (distribution by day of week).",
-      },
-      {
-        phase: "Share",
-        title: "Tableau visualisations",
-        desc: "3 interactive charts: average duration by user type, weekly ride distribution, monthly trend comparing casual vs member.",
-      },
-      {
-        phase: "Act",
-        title: "Business recommendations",
-        desc: "Delivery of 3 data-driven strategic recommendations to stakeholders, focusing on when, where, and how to reach casual riders.",
-      },
-    ],
-
-    recs_label: "Recommendations",
     recs_title: "Business Recommendations",
+    recs_desc:  "Strategies to convert casual riders into annual members",
     recs: [
-      {
-        n: "01",
-        title: "Summer & weekend campaigns",
-        desc: "Launch targeted membership offers in June–August, with weekend promotions. The casual peak in summer is the most fertile moment for conversion.",
-      },
-      {
-        n: "02",
-        title: "Leisure → commute messaging",
-        desc: "Develop content showing how an annual membership adds value for daily commuting too, bridging the gap between leisure use (casual) and commute use (member).",
-      },
-      {
-        n: "03",
-        title: "Touchpoints at key stations",
-        desc: "Install QR codes and in-app prompts at stations with high casual rider concentration, offering free trials or immediate discounts.",
-      },
+      { n: "01", title: "Summer & Weekend Campaigns", desc: "Launch targeted membership promotions during June–August, with weekend-specific offers. The summer casual peak is the most fertile conversion window." },
+      { n: "02", title: "Leisure → Commute Messaging", desc: "Marketing should highlight membership value for both leisure AND weekday commutes — positioning annual membership as a cost-effective all-purpose pass." },
+      { n: "03", title: "Touchpoints at Key Stations", desc: "Identify stations with high casual ridership on weekends. Deploy QR codes and in-app prompts at these locations during peak hours to drive in-the-moment conversions." },
     ],
-
-    learnings_label: "Takeaway",
-    learnings_title: "Results & Learnings",
     learnings: [
       "First end-to-end experience on a real dataset (~4.6M rows) with SQL and Tableau",
       "Full management of the analysis lifecycle: from problem definition to stakeholder presentation",
       "Structured presentation of results for a non-technical audience",
       "Proficiency with BigQuery for aggregating large data volumes",
     ],
+
+    months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    days:   ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    bike_types: ["Classic Bike", "Electric Bike"],
+    dur_buckets: ["<5 min","5–15 min","15–30 min","30–60 min",">60 min"],
+    legend_member: "Members",
+    legend_casual: "Casual",
   },
 };
 
-type SortKey = "label" | "casual" | "member" | "total" | "ratio";
-type SortDir = "asc" | "desc";
+/* ── Small components ─────────────────────────────────────────────────────── */
 
-function Bar({ value, max, color }: { value: number; max: number; color: string }) {
-  const pct = Math.round((value / max) * 100);
+function StatCard({ label, value, sub, accent }: { label: string; value: string; sub: string; accent: "member" | "casual" | "neutral" }) {
+  const bar = accent === "member" ? "bg-indigo-500" : accent === "casual" ? "bg-amber-400" : "bg-gray-400";
+  const val = accent === "member" ? "text-indigo-500" : accent === "casual" ? "text-amber-500" : "text-gray-700 dark:text-gray-200";
   return (
-    <div className="flex items-center gap-2 min-w-[120px]">
-      <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-        <motion.div
-          className={`h-full rounded-full ${color}`}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${pct}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        />
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div className={`h-1 ${bar}`} />
+      <div className="p-5">
+        <div className="text-xs font-mono uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">{label}</div>
+        <div className={`text-2xl font-bold ${val} leading-none mb-1`}>{value}</div>
+        <div className="text-xs text-gray-400 dark:text-gray-500">{sub}</div>
       </div>
-      <span className="text-xs text-gray-500 dark:text-gray-400 w-8 text-right">{value}</span>
     </div>
   );
 }
 
-function SortIcon({ col, sortKey, dir }: { col: SortKey; sortKey: SortKey; dir: SortDir }) {
-  if (col !== sortKey) return <span className="opacity-20 ml-1">↕</span>;
-  return dir === "asc"
-    ? <FiChevronUp className="inline ml-1 w-3 h-3" />
-    : <FiChevronDown className="inline ml-1 w-3 h-3" />;
+function ChartCard({ title, desc, children, full }: { title: string; desc: string; children: React.ReactNode; full?: boolean }) {
+  return (
+    <div className={`bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 ${full ? "col-span-full" : ""}`}>
+      <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-0.5 text-sm">{title}</h3>
+      <p className="text-xs font-mono text-gray-400 dark:text-gray-500 mb-5">{desc}</p>
+      {children}
+    </div>
+  );
 }
+
+/* ── Main page ────────────────────────────────────────────────────────────── */
+type Tab = "duration" | "weekly" | "monthly" | "data" | "insights";
+type SortKey = "label" | "rides" | "pct";
+type SortDir = "asc" | "desc";
 
 export default function CyclisticPage() {
   const { lang } = useLang();
+  const { dark } = useTheme();
   const c = CONTENT[lang];
 
-  const [activeTab, setActiveTab] = useState<"weekly" | "monthly" | "duration">("weekly");
-  const [sortKey, setSortKey] = useState<SortKey>("label");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [activeTab, setActiveTab]     = useState<Tab>("duration");
+  const [showMember, setShowMember]   = useState(true);
+  const [showCasual, setShowCasual]   = useState(true);
+  const [sortKey, setSortKey]         = useState<SortKey>("label");
+  const [sortDir, setSortDir]         = useState<SortDir>("asc");
+
+  /* ── Chart theme helpers ─────────────────────────────────────── */
+  const grid  = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const muted = dark ? "#6b7280" : "#9ca3af";
+  const tt    = useMemo(() => ({
+    backgroundColor: dark ? "#1f2937" : "#ffffff",
+    borderColor:     dark ? "#374151" : "#e5e7eb",
+    titleColor:      dark ? "#f3f4f6" : "#111827",
+    bodyColor:       dark ? "#d1d5db" : "#374151",
+    borderWidth: 1,
+    padding: 10,
+  }), [dark]);
+
+  function baseOpts(yFmt?: (v: number | string) => string) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { ...tt },
+      },
+      scales: {
+        x: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 } } },
+        y: {
+          grid: { color: grid },
+          ticks: { color: muted, font: { size: 11 }, ...(yFmt ? { callback: yFmt } : {}) },
+        },
+      },
+    };
+  }
+
+  function legend() {
+    return {
+      display: true,
+      labels: {
+        color: dark ? "#d1d5db" : "#374151",
+        font: { size: 11 },
+        usePointStyle: true,
+        pointStyleWidth: 8,
+      },
+    };
+  }
+
+  /* ── Tab: duration charts ──────────────────────────────────── */
+  const durTypeData = {
+    labels: c.bike_types,
+    datasets: [
+      { label: c.legend_member, data: [13.2, 11.8], backgroundColor: MEMBER_CLR, borderRadius: 4 },
+      { label: c.legend_casual, data: [30.4, 22.7], backgroundColor: CASUAL_CLR, borderRadius: 4 },
+    ],
+  };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lbl = (fn: (ctx: any) => string) => fn;
+
+  const durTypeOpts = {
+    ...baseOpts(v => v + " min"),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: legend(),
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw} min`) } },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + " min" } },
+    },
+  };
+
+  const donutData = {
+    labels: [c.legend_member, c.legend_casual],
+    datasets: [{
+      data: [TOTAL_M, TOTAL_C],
+      backgroundColor: [MEMBER_CLR, CASUAL_CLR],
+      borderColor: dark ? "#111827" : "#ffffff",
+      borderWidth: 3,
+      hoverOffset: 6,
+    }],
+  };
+  const donutOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "68%",
+    plugins: {
+      legend: { ...legend(), position: "bottom" as const },
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.label}: ${((ctx.raw as number) / 1e6).toFixed(2)}M`) } },
+    },
+  };
+
+  const durDistData = {
+    labels: c.dur_buckets,
+    datasets: [
+      { label: c.legend_member, data: DUR_DIST_M, backgroundColor: MEMBER_CLR, borderRadius: 3 },
+      { label: c.legend_casual, data: DUR_DIST_C, backgroundColor: CASUAL_CLR, borderRadius: 3 },
+    ],
+  };
+  const durDistOpts = {
+    ...baseOpts(v => v + "%"),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: legend(),
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`) } },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + "%" } },
+    },
+  };
+
+  /* ── Tab: weekly charts ────────────────────────────────────── */
+  const weeklyData = {
+    labels: c.days,
+    datasets: [
+      { label: c.legend_member, data: WEEKLY_M, backgroundColor: MEMBER_CLR, borderRadius: 3 },
+      { label: c.legend_casual, data: WEEKLY_C, backgroundColor: CASUAL_CLR, borderRadius: 3 },
+    ],
+  };
+  const weeklyOpts = {
+    ...baseOpts(v => Math.round(+v / 1000) + "k"),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: legend(),
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${(ctx.raw / 1000).toFixed(0)}k`) } },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => Math.round(+v / 1000) + "k" } },
+    },
+  };
+
+  const dailyDurData = {
+    labels: c.days,
+    datasets: [
+      { label: c.legend_member, data: DAILY_DUR_M, borderColor: MEMBER_CLR, backgroundColor: MEMBER_FILL, fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: MEMBER_CLR },
+      { label: c.legend_casual, data: DAILY_DUR_C, borderColor: CASUAL_CLR, backgroundColor: CASUAL_FILL, fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: CASUAL_CLR },
+    ],
+  };
+  const dailyDurOpts = {
+    ...baseOpts(v => v + " min"),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: legend(),
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw} min`) } },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + " min" } },
+    },
+  };
+
+  /* ── Tab: monthly charts ───────────────────────────────────── */
+  const monthlyData = {
+    labels: c.months,
+    datasets: [
+      { label: c.legend_member, data: MONTHLY_M, borderColor: MEMBER_CLR, backgroundColor: MEMBER_FILL, fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: MEMBER_CLR },
+      { label: c.legend_casual, data: MONTHLY_C, borderColor: CASUAL_CLR, backgroundColor: CASUAL_FILL, fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: CASUAL_CLR },
+    ],
+  };
+  const monthlyOpts = {
+    ...baseOpts(v => Math.round(+v / 1000) + "k"),
+    plugins: {
+      ...baseOpts().plugins,
+      legend: legend(),
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${(ctx.raw / 1000).toFixed(0)}k`) } },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => Math.round(+v / 1000) + "k" } },
+    },
+  };
+
+  const pctData = {
+    labels: c.months,
+    datasets: [
+      { label: c.legend_member, data: PCT_M, backgroundColor: MEMBER_CLR, borderRadius: 2 },
+      { label: c.legend_casual, data: PCT_C, backgroundColor: CASUAL_CLR, borderRadius: 2 },
+    ],
+  };
+
+  const ratioData = {
+    labels: c.months,
+    datasets: [{
+      label: "Casual/Member",
+      data: RATIO,
+      backgroundColor: RATIO.map(v => v >= 1 ? CASUAL_CLR : MEMBER_CLR),
+      borderRadius: 3,
+    }],
+  };
+
+  /* ── Tab: data table rows ──────────────────────────────────── */
+  const maxRides = Math.max(...MONTHLY_M, ...MONTHLY_C);
+  const tableRows = useMemo(() => {
+    const rows: { month: string; type: "member" | "casual"; rides: number; pct: number }[] = [];
+    c.months.forEach((month, i) => {
+      if (showMember) rows.push({ month, type: "member", rides: MONTHLY_M[i], pct: PCT_M[i] });
+      if (showCasual) rows.push({ month, type: "casual", rides: MONTHLY_C[i], pct: PCT_C[i] });
+    });
+    return [...rows].sort((a, b) => {
+      let v = 0;
+      if (sortKey === "label")  v = a.month.localeCompare(b.month);
+      if (sortKey === "rides")  v = a.rides - b.rides;
+      if (sortKey === "pct")    v = a.pct - b.pct;
+      return sortDir === "asc" ? v : -v;
+    });
+  }, [showMember, showCasual, sortKey, sortDir, c.months]);
 
   function handleSort(key: SortKey) {
-    if (key === sortKey) {
-      setSortDir(d => d === "asc" ? "desc" : "asc");
-    } else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
+    if (key === sortKey) setSortDir(d => d === "asc" ? "desc" : "asc");
+    else { setSortKey(key); setSortDir("asc"); }
+  }
+  function SortIco({ k }: { k: SortKey }) {
+    if (k !== sortKey) return <span className="opacity-20 ml-1 text-xs">↕</span>;
+    return sortDir === "asc"
+      ? <FiChevronUp className="inline ml-1 w-3 h-3 text-indigo-500" />
+      : <FiChevronDown className="inline ml-1 w-3 h-3 text-indigo-500" />;
   }
 
-  function thClass(key: SortKey) {
-    return `px-4 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors ${
-      sortKey === key
-        ? "text-indigo-600 dark:text-indigo-400"
-        : "text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400"
-    }`;
-  }
-
-  /* ── Weekly table ─────────────────────────────────────────── */
-  const weeklyRows = [...WEEKLY_DATA]
-    .map((r, i) => ({ ...r, label: c.days[i], total: r.casual + r.member }))
-    .sort((a, b) => {
-      const v = sortKey === "label"
-        ? a.label.localeCompare(b.label)
-        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
-      return sortDir === "asc" ? v : -v;
-    });
-  const weeklyMax = Math.max(...weeklyRows.map(r => r.total));
-
-  /* ── Monthly table ────────────────────────────────────────── */
-  const monthlyRows = [...MONTHLY_DATA]
-    .map((r, i) => ({ ...r, label: c.months[i], total: r.casual + r.member }))
-    .sort((a, b) => {
-      const v = sortKey === "label"
-        ? a.label.localeCompare(b.label)
-        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
-      return sortDir === "asc" ? v : -v;
-    });
-  const monthlyMax = Math.max(...monthlyRows.map(r => r.total));
-
-  /* ── Duration table ───────────────────────────────────────── */
-  const durationRows = [...DURATION_DATA]
-    .map((r, i) => ({
-      ...r,
-      label: c.days[i],
-      ratio: parseFloat((r.casual / r.member).toFixed(2)),
-    }))
-    .sort((a, b) => {
-      const v = sortKey === "label"
-        ? a.label.localeCompare(b.label)
-        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
-      return sortDir === "asc" ? v : -v;
-    });
-  const durationCasualMax = Math.max(...durationRows.map(r => r.casual));
-  const durationMemberMax = Math.max(...durationRows.map(r => r.member));
-
-  const tabs = [
-    { id: "weekly" as const, label: c.tab_weekly },
-    { id: "monthly" as const, label: c.tab_monthly },
-    { id: "duration" as const, label: c.tab_duration },
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "duration", label: c.tab_duration },
+    { id: "weekly",   label: c.tab_weekly   },
+    { id: "monthly",  label: c.tab_monthly  },
+    { id: "data",     label: c.tab_data     },
+    { id: "insights", label: c.tab_insights },
   ];
 
   return (
@@ -393,9 +463,9 @@ export default function CyclisticPage() {
       <main className="pt-20 bg-white dark:bg-gray-900 min-h-screen">
 
         {/* ── HEADER ─────────────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <nav className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6">
+        <section className="py-14 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <nav className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-5">
               <Link href="/" className="hover:text-indigo-500 transition-colors">Home</Link>
               <span>/</span>
               <Link href="/#projects" className="hover:text-indigo-500 transition-colors">{c.breadcrumb_projects}</Link>
@@ -403,402 +473,342 @@ export default function CyclisticPage() {
               <span className="text-gray-600 dark:text-gray-300">Cyclistic Bike-Share</span>
             </nav>
 
-            <Link
-              href="/#projects"
-              className="inline-flex items-center gap-1 text-sm text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors mb-8 font-medium"
-            >
+            <Link href="/#projects" className="inline-flex items-center gap-1 text-sm text-indigo-500 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors mb-6 font-medium">
               {c.back}
             </Link>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-3">{c.date}</p>
-              <h1
-                className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-3"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Cyclistic Bike-Share Analysis
-              </h1>
-              <p className="text-lg text-gray-500 dark:text-gray-400 mb-6">{c.subtitle}</p>
-
-              <div className="flex flex-wrap gap-2 mb-8">
-                {TAGS.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+                <div>
+                  <p className="text-indigo-500 font-semibold text-xs uppercase tracking-widest mb-2 font-mono">{c.date} · Case Study</p>
+                  <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-2" style={{ fontFamily: "var(--font-display)" }}>
+                    Cyclistic <span className="text-indigo-500">Bike‑Share</span>
+                  </h1>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 font-mono">{c.subtitle}</p>
+                </div>
+                <div className="flex items-center gap-4 flex-shrink-0">
+                  <div className="flex items-center gap-3 text-sm font-semibold">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" /> {c.legend_member}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> {c.legend_casual}
+                    </span>
+                  </div>
+                  <a href="https://github.com/corbisieromichele00/cyclistic-bike-share-analysis" target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors">
+                    <FiGithub className="w-4 h-4" /> GitHub
+                  </a>
+                </div>
               </div>
 
-              <a
-                href="https://github.com/corbisieromichele00/cyclistic-bike-share-analysis"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-colors"
-              >
-                <FiGithub className="w-4 h-4" /> GitHub
-              </a>
+              <div className="flex flex-wrap gap-2 mt-5">
+                {TAGS.map(tag => (
+                  <span key={tag} className="text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full">{tag}</span>
+                ))}
+              </div>
             </motion.div>
           </div>
         </section>
 
-        {/* ── OVERVIEW ───────────────────────────────────────── */}
-        <section className="py-16 bg-white dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.overview_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.overview_title}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {[
-                { label: c.business_task_label, content: c.business_task },
-                { label: c.dataset_label, content: c.dataset },
-                { label: c.tools_label, content: c.tools },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700"
-                >
-                  <div className="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-3">{item.label}</div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{item.content}</p>
-                </div>
-              ))}
+        {/* ── STATS ROW ──────────────────────────────────────── */}
+        <section className="border-b border-gray-100 dark:border-gray-700">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              <StatCard label={c.stat_member_rides} value="2.74M" sub={c.stat_member_sub} accent="member" />
+              <StatCard label={c.stat_casual_rides} value="1.87M" sub={c.stat_casual_sub} accent="casual" />
+              <StatCard label={c.stat_member_dur}   value="12.4 min" sub={c.stat_member_dur_sub} accent="member" />
+              <StatCard label={c.stat_casual_dur}   value="28.1 min" sub={c.stat_casual_dur_sub} accent="casual" />
+              <StatCard label={c.stat_total}         value="4.61M" sub={c.stat_total_sub} accent="neutral" />
             </div>
           </div>
         </section>
 
-        {/* ── KEY FINDINGS ───────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.findings_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.findings_title}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {c.findings.map((f, i) => (
-                <motion.div
-                  key={f.stat}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="bg-white dark:bg-gray-700 rounded-2xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm"
-                >
-                  <div className="text-4xl font-bold text-indigo-500 mb-1">{f.stat}</div>
-                  <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3">{f.label}</div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{f.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── DATA TABLES ────────────────────────────────────── */}
-        <section className="py-16 bg-white dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.tables_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.tables_title}
-            </h2>
-            <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">{c.tables_note}</p>
-
-            {/* Legend */}
-            <div className="flex items-center gap-5 mb-5">
-              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
-                {c.legend_casual}
-              </span>
-              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <span className="w-3 h-3 rounded-full bg-indigo-400 inline-block" />
-                {c.legend_member}
-              </span>
-            </div>
-
-            {/* Tab bar */}
-            <div className="flex gap-2 mb-5 flex-wrap">
-              {tabs.map((tab) => (
+        {/* ── TAB NAV ────────────────────────────────────────── */}
+        <div className="sticky top-16 z-20 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <div className="flex overflow-x-auto gap-0 scrollbar-none">
+              {TABS.map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setSortKey("label"); setSortDir("asc"); }}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative px-5 py-4 text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-colors flex-shrink-0 ${
                     activeTab === tab.id
-                      ? "bg-indigo-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-indigo-500"
+                      : "text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                   }`}
                 >
                   {tab.label}
+                  {activeTab === tab.id && (
+                    <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500" />
+                  )}
                 </button>
               ))}
             </div>
-
-            {/* Table container */}
-            <div className="rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-
-                {/* ── Weekly ─────────────────────────────────── */}
-                {activeTab === "weekly" && (
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                      <tr>
-                        <th className={thClass("label")} onClick={() => handleSort("label")}>
-                          {c.col_label}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
-                          {c.col_casual}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("member")} onClick={() => handleSort("member")}>
-                          {c.col_member}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("total")} onClick={() => handleSort("total")}>
-                          {c.col_total}<SortIcon col="total" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-                      {weeklyRows.map((row, i) => (
-                        <motion.tr
-                          key={row.key}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.25, delay: i * 0.04 }}
-                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                        >
-                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.casual} max={weeklyMax} color="bg-emerald-400" />
-                          </td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.member} max={weeklyMax} color="bg-indigo-400" />
-                          </td>
-                          <td className="px-4 py-3 text-gray-700 dark:text-gray-300 font-medium">{row.total}</td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-
-                {/* ── Monthly ────────────────────────────────── */}
-                {activeTab === "monthly" && (
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                      <tr>
-                        <th className={thClass("label")} onClick={() => handleSort("label")}>
-                          {c.col_label_month}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
-                          {c.col_casual}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("member")} onClick={() => handleSort("member")}>
-                          {c.col_member}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("total")} onClick={() => handleSort("total")}>
-                          {c.col_total}<SortIcon col="total" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-                      {monthlyRows.map((row, i) => (
-                        <motion.tr
-                          key={row.key}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.25, delay: i * 0.04 }}
-                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                        >
-                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.casual} max={monthlyMax} color="bg-emerald-400" />
-                          </td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.member} max={monthlyMax} color="bg-indigo-400" />
-                          </td>
-                          <td className="px-4 py-3 text-gray-700 dark:text-gray-300 font-medium">{row.total}</td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-
-                {/* ── Duration ───────────────────────────────── */}
-                {activeTab === "duration" && (
-                  <table className="w-full text-sm">
-                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-                      <tr>
-                        <th className={thClass("label")} onClick={() => handleSort("label")}>
-                          {c.col_label}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
-                          {c.col_casual_min}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("member")} onClick={() => handleSort("member")}>
-                          {c.col_member_min}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                        <th className={thClass("ratio")} onClick={() => handleSort("ratio")}>
-                          {c.col_ratio}<SortIcon col="ratio" sortKey={sortKey} dir={sortDir} />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
-                      {durationRows.map((row, i) => (
-                        <motion.tr
-                          key={row.key}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.25, delay: i * 0.04 }}
-                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                        >
-                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.casual} max={durationCasualMax} color="bg-emerald-400" />
-                          </td>
-                          <td className="px-4 py-3">
-                            <Bar value={row.member} max={durationMemberMax} color="bg-indigo-400" />
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
-                              {row.ratio}×
-                            </span>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-
-              </div>
-            </div>
           </div>
-        </section>
+        </div>
 
-        {/* ── PROCESS ────────────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.process_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-10"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.process_title}
-            </h2>
-            <div className="relative">
-              <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-indigo-100 dark:bg-indigo-900 hidden sm:block" />
-              <div className="space-y-5">
-                {c.process_steps.map((step, i) => (
-                  <motion.div
-                    key={step.phase}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ duration: 0.4, delay: i * 0.07 }}
-                    className="flex gap-5"
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center z-10 shadow-sm">
-                      <span className="text-white text-xs font-bold">{i + 1}</span>
-                    </div>
-                    <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                          {step.phase}
-                        </span>
-                        <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{step.title}</h3>
+        {/* ── TAB CONTENT ────────────────────────────────────── */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+          {/* ── Duration ─────────────────────────────────────── */}
+          {activeTab === "duration" && (
+            <motion.div key="duration" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <ChartCard title={c.chart_dur_type_title} desc={c.chart_dur_type_desc} full>
+                <div className="h-64">
+                  <Bar data={durTypeData} options={durTypeOpts as Parameters<typeof Bar>[0]["options"]} />
+                </div>
+              </ChartCard>
+              <ChartCard title={c.chart_count_title} desc={c.chart_count_desc}>
+                <div className="h-60">
+                  <Doughnut data={donutData} options={donutOpts} />
+                </div>
+              </ChartCard>
+              <ChartCard title={c.chart_dist_title} desc={c.chart_dist_desc}>
+                <div className="h-60">
+                  <Bar data={durDistData} options={durDistOpts as Parameters<typeof Bar>[0]["options"]} />
+                </div>
+              </ChartCard>
+            </motion.div>
+          )}
+
+          {/* ── Weekly ───────────────────────────────────────── */}
+          {activeTab === "weekly" && (
+            <motion.div key="weekly" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <ChartCard title={c.chart_weekly_title} desc={c.chart_weekly_desc} full>
+                <div className="h-72">
+                  <Bar data={weeklyData} options={weeklyOpts as Parameters<typeof Bar>[0]["options"]} />
+                </div>
+              </ChartCard>
+              <ChartCard title={c.chart_weekly_dur_title} desc={c.chart_weekly_dur_desc} full>
+                <div className="h-64">
+                  <Line data={dailyDurData} options={dailyDurOpts as Parameters<typeof Line>[0]["options"]} />
+                </div>
+              </ChartCard>
+            </motion.div>
+          )}
+
+          {/* ── Monthly ──────────────────────────────────────── */}
+          {activeTab === "monthly" && (
+            <motion.div key="monthly" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <ChartCard title={c.chart_monthly_title} desc={c.chart_monthly_desc} full>
+                <div className="h-72">
+                  <Line data={monthlyData} options={monthlyOpts as Parameters<typeof Line>[0]["options"]} />
+                </div>
+              </ChartCard>
+              <ChartCard title={c.chart_pct_title} desc={c.chart_pct_desc}>
+                <div className="h-60">
+                  <Bar data={pctData} options={{
+                    ...baseOpts(v => v + "%"),
+                    plugins: { ...baseOpts().plugins, legend: legend(), tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`) } } },
+                    scales: {
+                      x: { grid: { display: false }, ticks: { color: muted, font: { size: 9 } } },
+                      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + "%" } },
+                    },
+                  } as Parameters<typeof Bar>[0]["options"]} />
+                </div>
+              </ChartCard>
+              <ChartCard title={c.chart_ratio_title} desc={c.chart_ratio_desc}>
+                <div className="h-60">
+                  <Bar data={ratioData} options={{
+                    ...baseOpts(),
+                    plugins: { legend: { display: false }, tooltip: { ...tt, callbacks: { label: lbl(ctx => ` Ratio: ${ctx.raw}`) } } },
+                    scales: {
+                      x: { grid: { display: false }, ticks: { color: muted, font: { size: 9 } } },
+                      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 } } },
+                    },
+                  } as Parameters<typeof Bar>[0]["options"]} />
+                </div>
+              </ChartCard>
+            </motion.div>
+          )}
+
+          {/* ── Data Tables ──────────────────────────────────── */}
+          {activeTab === "data" && (
+            <motion.div key="data" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="space-y-5">
+
+              {/* Monthly table */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{c.table_monthly_title}</h3>
+                  <p className="text-xs font-mono text-gray-400 dark:text-gray-500 mb-4">{c.table_monthly_desc}</p>
+                  {/* filter toggle */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="text-xs font-mono uppercase tracking-wider text-gray-400 dark:text-gray-500">{c.filter_label}</span>
+                    <button
+                      onClick={() => setShowMember(v => !v)}
+                      className={`px-3 py-1 rounded text-xs font-mono border transition-colors ${
+                        showMember
+                          ? "border-indigo-400 text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20"
+                          : "border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500"
+                      }`}
+                    >{c.legend_member}</button>
+                    <button
+                      onClick={() => setShowCasual(v => !v)}
+                      className={`px-3 py-1 rounded text-xs font-mono border transition-colors ${
+                        showCasual
+                          ? "border-amber-400 text-amber-500 bg-amber-50 dark:bg-amber-900/20"
+                          : "border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500"
+                      }`}
+                    >{c.legend_casual}</button>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs font-mono">
+                    <thead className="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-700">
+                      <tr>
+                        <th className={`px-6 py-3 text-left cursor-pointer select-none text-gray-400 dark:text-gray-500 hover:text-indigo-500 ${sortKey === "label" ? "text-indigo-500" : ""}`} onClick={() => handleSort("label")}>
+                          {c.col_month}<SortIco k="label" />
+                        </th>
+                        <th className="px-4 py-3 text-left text-gray-400 dark:text-gray-500">{c.col_type}</th>
+                        <th className={`px-4 py-3 text-right cursor-pointer select-none text-gray-400 dark:text-gray-500 hover:text-indigo-500 ${sortKey === "rides" ? "text-indigo-500" : ""}`} onClick={() => handleSort("rides")}>
+                          {c.col_rides}<SortIco k="rides" />
+                        </th>
+                        <th className={`px-4 py-3 text-right cursor-pointer select-none text-gray-400 dark:text-gray-500 hover:text-indigo-500 ${sortKey === "pct" ? "text-indigo-500" : ""}`} onClick={() => handleSort("pct")}>
+                          {c.col_pct}<SortIco k="pct" />
+                        </th>
+                        <th className="px-4 py-3 text-left text-gray-400 dark:text-gray-500 min-w-[140px]">{c.col_dist}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                      {tableRows.map((row, i) => {
+                        const barW = Math.round((row.rides / maxRides) * 100);
+                        const isM = row.type === "member";
+                        return (
+                          <motion.tr key={`${row.month}-${row.type}-${i}`}
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15, delay: i * 0.02 }}
+                            className="hover:bg-white dark:hover:bg-gray-700/50 transition-colors">
+                            <td className="px-6 py-2.5 text-gray-700 dark:text-gray-200">{row.month} 2023</td>
+                            <td className="px-4 py-2.5">
+                              <span className={`inline-block px-2 py-0.5 rounded text-xs uppercase tracking-wide ${
+                                isM ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                                    : "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                              }`}>{isM ? c.legend_member : c.legend_casual}</span>
+                            </td>
+                            <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{row.rides.toLocaleString()}</td>
+                            <td className="px-4 py-2.5 text-right text-gray-700 dark:text-gray-200">{row.pct}%</td>
+                            <td className="px-4 py-2.5">
+                              <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden w-32">
+                                <motion.div
+                                  className={`h-full rounded-full ${isM ? "bg-indigo-400" : "bg-amber-400"}`}
+                                  initial={{ width: 0 }} animate={{ width: `${barW}%` }} transition={{ duration: 0.5 }}
+                                />
+                              </div>
+                            </td>
+                          </motion.tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* KPI table */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{c.table_kpi_title}</h3>
+                  <p className="text-xs font-mono text-gray-400 dark:text-gray-500">{c.table_kpi_desc}</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs font-mono">
+                    <thead className="bg-white dark:bg-gray-900 border-y border-gray-100 dark:border-gray-700">
+                      <tr>
+                        {[c.col_user, c.col_rides, c.col_avg_dur, c.col_share].map(h => (
+                          <th key={h} className="px-6 py-3 text-left text-gray-400 dark:text-gray-500">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
+                      {[
+                        { type: "member", rides: "2,737,144", avg: "12.4", share: "59.4%" },
+                        { type: "casual", rides: "1,872,607", avg: "28.1", share: "40.6%" },
+                      ].map(row => (
+                        <tr key={row.type} className="hover:bg-white dark:hover:bg-gray-700/50 transition-colors">
+                          <td className="px-6 py-3">
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs uppercase tracking-wide ${
+                              row.type === "member"
+                                ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                                : "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                            }`}>{row.type === "member" ? c.legend_member : c.legend_casual}</span>
+                          </td>
+                          <td className="px-6 py-3 text-gray-700 dark:text-gray-200">{row.rides}</td>
+                          <td className="px-6 py-3 text-gray-700 dark:text-gray-200">{row.avg}</td>
+                          <td className="px-6 py-3 text-gray-700 dark:text-gray-200">{row.share}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── Insights ─────────────────────────────────────── */}
+          {activeTab === "insights" && (
+            <motion.div key="insights" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="space-y-6">
+
+              {/* Insight cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {c.insights.map((ins, i) => {
+                  const borders = ["border-l-indigo-500", "border-l-amber-400", "border-l-indigo-400", "border-l-emerald-500"];
+                  return (
+                    <motion.div key={i}
+                      initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.35, delay: i * 0.08 }}
+                      className={`bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 border-l-4 ${borders[i]} p-6`}>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-2 text-sm">{ins.title}</h3>
+                      <p className="text-xs font-mono text-gray-500 dark:text-gray-400 leading-relaxed">{ins.text}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Recommendations */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6">
+                <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1 text-sm">{c.recs_title}</h3>
+                <p className="text-xs font-mono text-gray-400 dark:text-gray-500 mb-5">{c.recs_desc}</p>
+                <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                  {c.recs.map((r, i) => (
+                    <li key={i} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                      <span className="text-indigo-500 font-mono text-xs font-bold pt-0.5 flex-shrink-0">{r.n}</span>
+                      <div>
+                        <div className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{r.title}</div>
+                        <p className="text-xs font-mono text-gray-500 dark:text-gray-400 leading-relaxed">{r.desc}</p>
                       </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{step.desc}</p>
-                    </div>
-                  </motion.div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Learnings */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {c.learnings.map((l, i) => (
+                  <div key={i} className="flex items-start gap-3 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
+                    <FiCheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs font-mono text-gray-600 dark:text-gray-300 leading-relaxed">{l}</p>
+                  </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* ── RECOMMENDATIONS ────────────────────────────────── */}
-        <section className="py-16 bg-white dark:bg-gray-900">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.recs_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.recs_title}
-            </h2>
-            <div className="space-y-4">
-              {c.recs.map((r, i) => (
-                <motion.div
-                  key={r.n}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="flex gap-5 bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
-                >
-                  <div className="text-3xl font-bold text-indigo-100 dark:text-indigo-900 select-none w-12 flex-shrink-0 leading-none pt-0.5">
-                    {r.n}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{r.title}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{r.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+              {/* Bottom CTA */}
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link href="/#projects" className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 font-semibold px-6 py-3 rounded-full transition-colors text-sm">
+                  {c.back}
+                </Link>
+                <a href="https://github.com/corbisieromichele00/cyclistic-bike-share-analysis" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm">
+                  <FiGithub className="w-4 h-4" /> GitHub
+                </a>
+              </div>
+            </motion.div>
+          )}
 
-        {/* ── LEARNINGS ──────────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.learnings_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.learnings_title}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-              {c.learnings.map((l, i) => (
-                <div
-                  key={i}
-                  className="flex items-start gap-3 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
-                >
-                  <FiCheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{l}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              <Link
-                href="/#projects"
-                className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 font-semibold px-6 py-3 rounded-full transition-colors text-sm"
-              >
-                {c.back}
-              </Link>
-              <a
-                href="https://github.com/corbisieromichele00/cyclistic-bike-share-analysis"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm"
-              >
-                <FiGithub className="w-4 h-4" /> GitHub
-              </a>
-            </div>
-          </div>
-        </section>
-
+        </div>
       </main>
       <Footer />
     </>
