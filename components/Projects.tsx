@@ -15,7 +15,8 @@ export default function Projects() {
     {
       title: t("proj1_title"),
       description: t("proj1_desc"),
-      tags: ["Python", "Pandas", "Tableau", "Excel"],
+      tags: ["SQL", "Tableau", "Google Data Analytics"],
+      github: "https://github.com/corbisieromichele00/cyclistic-bike-share-analysis",
     },
     {
       title: t("proj2_title"),
@@ -79,9 +80,20 @@ export default function Projects() {
 
               {/* Links */}
               <div className="flex gap-3 mt-5">
-                <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
-                  <FiGithub className="w-4 h-4" /> GitHub
-                </span>
+                {"github" in project && project.github ? (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+                  >
+                    <FiGithub className="w-4 h-4" /> GitHub
+                  </a>
+                ) : (
+                  <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                    <FiGithub className="w-4 h-4" /> GitHub
+                  </span>
+                )}
                 <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
                   <FiExternalLink className="w-4 h-4" /> Live
                 </span>
