@@ -1,6 +1,7 @@
 "use client";
 
-import { FiGithub, FiCheckCircle } from "react-icons/fi";
+import { useState } from "react";
+import { FiGithub, FiCheckCircle, FiChevronUp, FiChevronDown } from "react-icons/fi";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -8,6 +9,43 @@ import { useLang } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
 
 const TAGS = ["SQL", "Tableau", "Google Data Analytics", "Data Cleaning", "Data Visualization"];
+
+/* ── static dataset ─────────────────────────────────────────── */
+const WEEKLY_DATA = [
+  { key: "Mon", casual: 128, member: 385 },
+  { key: "Tue", casual: 122, member: 402 },
+  { key: "Wed", casual: 131, member: 408 },
+  { key: "Thu", casual: 145, member: 391 },
+  { key: "Fri", casual: 178, member: 372 },
+  { key: "Sat", casual: 295, member: 298 },
+  { key: "Sun", casual: 255, member: 258 },
+];
+
+const MONTHLY_DATA = [
+  { key: "Jan", casual: 18,  member: 98  },
+  { key: "Feb", casual: 22,  member: 105 },
+  { key: "Mar", casual: 52,  member: 148 },
+  { key: "Apr", casual: 112, member: 198 },
+  { key: "May", casual: 185, member: 278 },
+  { key: "Jun", casual: 253, member: 318 },
+  { key: "Jul", casual: 282, member: 328 },
+  { key: "Aug", casual: 271, member: 315 },
+  { key: "Sep", casual: 198, member: 275 },
+  { key: "Oct", casual: 118, member: 215 },
+  { key: "Nov", casual: 58,  member: 155 },
+  { key: "Dec", casual: 28,  member: 102 },
+];
+
+const DURATION_DATA = [
+  { key: "Mon", casual: 25.8, member: 11.9 },
+  { key: "Tue", casual: 24.2, member: 11.6 },
+  { key: "Wed", casual: 24.8, member: 11.8 },
+  { key: "Thu", casual: 26.1, member: 12.0 },
+  { key: "Fri", casual: 27.5, member: 12.3 },
+  { key: "Sat", casual: 32.4, member: 13.8 },
+  { key: "Sun", casual: 33.9, member: 14.1 },
+];
+/* ────────────────────────────────────────────────────────────── */
 
 const CONTENT = {
   it: {
@@ -46,6 +84,25 @@ const CONTENT = {
         desc: "Il 58% delle corse annuali casual si concentra nei mesi estivi (giugno–agosto), contro una distribuzione più uniforme per i members.",
       },
     ],
+
+    tables_label: "Dati",
+    tables_title: "Visualizzazione dei Dati",
+    tables_note: "Dati aggregati 2023 · valori in migliaia di corse",
+    tab_weekly: "Pattern Settimanale",
+    tab_monthly: "Trend Mensile",
+    tab_duration: "Durata Media",
+    col_label: "Giorno",
+    col_label_month: "Mese",
+    col_casual: "Casual (k)",
+    col_member: "Member (k)",
+    col_total: "Totale (k)",
+    col_casual_min: "Casual (min)",
+    col_member_min: "Member (min)",
+    col_ratio: "Rapporto",
+    days: ["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"],
+    months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
+    legend_casual: "Casual riders",
+    legend_member: "Members",
 
     process_label: "Metodologia",
     process_title: "Processo di Analisi",
@@ -148,6 +205,25 @@ const CONTENT = {
       },
     ],
 
+    tables_label: "Data",
+    tables_title: "Data Visualisation",
+    tables_note: "Aggregated 2023 data · values in thousands of rides",
+    tab_weekly: "Weekly Pattern",
+    tab_monthly: "Monthly Trend",
+    tab_duration: "Avg Duration",
+    col_label: "Day",
+    col_label_month: "Month",
+    col_casual: "Casual (k)",
+    col_member: "Member (k)",
+    col_total: "Total (k)",
+    col_casual_min: "Casual (min)",
+    col_member_min: "Member (min)",
+    col_ratio: "Ratio",
+    days: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    legend_casual: "Casual riders",
+    legend_member: "Members",
+
     process_label: "Methodology",
     process_title: "Analysis Process",
     process_steps: [
@@ -214,9 +290,102 @@ const CONTENT = {
   },
 };
 
+type SortKey = "label" | "casual" | "member" | "total" | "ratio";
+type SortDir = "asc" | "desc";
+
+function Bar({ value, max, color }: { value: number; max: number; color: string }) {
+  const pct = Math.round((value / max) * 100);
+  return (
+    <div className="flex items-center gap-2 min-w-[120px]">
+      <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+        <motion.div
+          className={`h-full rounded-full ${color}`}
+          initial={{ width: 0 }}
+          whileInView={{ width: `${pct}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        />
+      </div>
+      <span className="text-xs text-gray-500 dark:text-gray-400 w-8 text-right">{value}</span>
+    </div>
+  );
+}
+
+function SortIcon({ col, sortKey, dir }: { col: SortKey; sortKey: SortKey; dir: SortDir }) {
+  if (col !== sortKey) return <span className="opacity-20 ml-1">↕</span>;
+  return dir === "asc"
+    ? <FiChevronUp className="inline ml-1 w-3 h-3" />
+    : <FiChevronDown className="inline ml-1 w-3 h-3" />;
+}
+
 export default function CyclisticPage() {
   const { lang } = useLang();
   const c = CONTENT[lang];
+
+  const [activeTab, setActiveTab] = useState<"weekly" | "monthly" | "duration">("weekly");
+  const [sortKey, setSortKey] = useState<SortKey>("label");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
+
+  function handleSort(key: SortKey) {
+    if (key === sortKey) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  }
+
+  function thClass(key: SortKey) {
+    return `px-4 py-3 text-left text-xs font-bold uppercase tracking-wider cursor-pointer select-none transition-colors ${
+      sortKey === key
+        ? "text-indigo-600 dark:text-indigo-400"
+        : "text-gray-500 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400"
+    }`;
+  }
+
+  /* ── Weekly table ─────────────────────────────────────────── */
+  const weeklyRows = [...WEEKLY_DATA]
+    .map((r, i) => ({ ...r, label: c.days[i], total: r.casual + r.member }))
+    .sort((a, b) => {
+      const v = sortKey === "label"
+        ? a.label.localeCompare(b.label)
+        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
+      return sortDir === "asc" ? v : -v;
+    });
+  const weeklyMax = Math.max(...weeklyRows.map(r => r.total));
+
+  /* ── Monthly table ────────────────────────────────────────── */
+  const monthlyRows = [...MONTHLY_DATA]
+    .map((r, i) => ({ ...r, label: c.months[i], total: r.casual + r.member }))
+    .sort((a, b) => {
+      const v = sortKey === "label"
+        ? a.label.localeCompare(b.label)
+        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
+      return sortDir === "asc" ? v : -v;
+    });
+  const monthlyMax = Math.max(...monthlyRows.map(r => r.total));
+
+  /* ── Duration table ───────────────────────────────────────── */
+  const durationRows = [...DURATION_DATA]
+    .map((r, i) => ({
+      ...r,
+      label: c.days[i],
+      ratio: parseFloat((r.casual / r.member).toFixed(2)),
+    }))
+    .sort((a, b) => {
+      const v = sortKey === "label"
+        ? a.label.localeCompare(b.label)
+        : (a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number);
+      return sortDir === "asc" ? v : -v;
+    });
+  const durationCasualMax = Math.max(...durationRows.map(r => r.casual));
+  const durationMemberMax = Math.max(...durationRows.map(r => r.member));
+
+  const tabs = [
+    { id: "weekly" as const, label: c.tab_weekly },
+    { id: "monthly" as const, label: c.tab_monthly },
+    { id: "duration" as const, label: c.tab_duration },
+  ];
 
   return (
     <>
@@ -226,7 +395,6 @@ export default function CyclisticPage() {
         {/* ── HEADER ─────────────────────────────────────────── */}
         <section className="py-16 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6">
               <Link href="/" className="hover:text-indigo-500 transition-colors">Home</Link>
               <span>/</span>
@@ -256,7 +424,6 @@ export default function CyclisticPage() {
               </h1>
               <p className="text-lg text-gray-500 dark:text-gray-400 mb-6">{c.subtitle}</p>
 
-              {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-8">
                 {TAGS.map((tag) => (
                   <span
@@ -337,8 +504,188 @@ export default function CyclisticPage() {
           </div>
         </section>
 
-        {/* ── PROCESS ────────────────────────────────────────── */}
+        {/* ── DATA TABLES ────────────────────────────────────── */}
         <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.tables_label}</p>
+            <h2
+              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {c.tables_title}
+            </h2>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">{c.tables_note}</p>
+
+            {/* Legend */}
+            <div className="flex items-center gap-5 mb-5">
+              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="w-3 h-3 rounded-full bg-emerald-400 inline-block" />
+                {c.legend_casual}
+              </span>
+              <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="w-3 h-3 rounded-full bg-indigo-400 inline-block" />
+                {c.legend_member}
+              </span>
+            </div>
+
+            {/* Tab bar */}
+            <div className="flex gap-2 mb-5 flex-wrap">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => { setActiveTab(tab.id); setSortKey("label"); setSortDir("asc"); }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    activeTab === tab.id
+                      ? "bg-indigo-500 text-white"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Table container */}
+            <div className="rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+
+                {/* ── Weekly ─────────────────────────────────── */}
+                {activeTab === "weekly" && (
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                      <tr>
+                        <th className={thClass("label")} onClick={() => handleSort("label")}>
+                          {c.col_label}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
+                          {c.col_casual}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("member")} onClick={() => handleSort("member")}>
+                          {c.col_member}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("total")} onClick={() => handleSort("total")}>
+                          {c.col_total}<SortIcon col="total" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+                      {weeklyRows.map((row, i) => (
+                        <motion.tr
+                          key={row.key}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.25, delay: i * 0.04 }}
+                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.casual} max={weeklyMax} color="bg-emerald-400" />
+                          </td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.member} max={weeklyMax} color="bg-indigo-400" />
+                          </td>
+                          <td className="px-4 py-3 text-gray-700 dark:text-gray-300 font-medium">{row.total}</td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {/* ── Monthly ────────────────────────────────── */}
+                {activeTab === "monthly" && (
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                      <tr>
+                        <th className={thClass("label")} onClick={() => handleSort("label")}>
+                          {c.col_label_month}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
+                          {c.col_casual}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("member")} onClick={() => handleSort("member")}>
+                          {c.col_member}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("total")} onClick={() => handleSort("total")}>
+                          {c.col_total}<SortIcon col="total" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+                      {monthlyRows.map((row, i) => (
+                        <motion.tr
+                          key={row.key}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.25, delay: i * 0.04 }}
+                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.casual} max={monthlyMax} color="bg-emerald-400" />
+                          </td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.member} max={monthlyMax} color="bg-indigo-400" />
+                          </td>
+                          <td className="px-4 py-3 text-gray-700 dark:text-gray-300 font-medium">{row.total}</td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {/* ── Duration ───────────────────────────────── */}
+                {activeTab === "duration" && (
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+                      <tr>
+                        <th className={thClass("label")} onClick={() => handleSort("label")}>
+                          {c.col_label}<SortIcon col="label" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("casual")} onClick={() => handleSort("casual")}>
+                          {c.col_casual_min}<SortIcon col="casual" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("member")} onClick={() => handleSort("member")}>
+                          {c.col_member_min}<SortIcon col="member" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                        <th className={thClass("ratio")} onClick={() => handleSort("ratio")}>
+                          {c.col_ratio}<SortIcon col="ratio" sortKey={sortKey} dir={sortDir} />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
+                      {durationRows.map((row, i) => (
+                        <motion.tr
+                          key={row.key}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.25, delay: i * 0.04 }}
+                          className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <td className="px-4 py-3 font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap">{row.label}</td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.casual} max={durationCasualMax} color="bg-emerald-400" />
+                          </td>
+                          <td className="px-4 py-3">
+                            <Bar value={row.member} max={durationMemberMax} color="bg-indigo-400" />
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+                              {row.ratio}×
+                            </span>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROCESS ────────────────────────────────────────── */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.process_label}</p>
             <h2
@@ -362,7 +709,7 @@ export default function CyclisticPage() {
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center z-10 shadow-sm">
                       <span className="text-white text-xs font-bold">{i + 1}</span>
                     </div>
-                    <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
+                    <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
                           {step.phase}
@@ -379,7 +726,7 @@ export default function CyclisticPage() {
         </section>
 
         {/* ── RECOMMENDATIONS ────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
+        <section className="py-16 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.recs_label}</p>
             <h2
@@ -396,7 +743,7 @@ export default function CyclisticPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ duration: 0.4, delay: i * 0.08 }}
-                  className="flex gap-5 bg-white dark:bg-gray-700 rounded-2xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm"
+                  className="flex gap-5 bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm"
                 >
                   <div className="text-3xl font-bold text-indigo-100 dark:text-indigo-900 select-none w-12 flex-shrink-0 leading-none pt-0.5">
                     {r.n}
@@ -412,7 +759,7 @@ export default function CyclisticPage() {
         </section>
 
         {/* ── LEARNINGS ──────────────────────────────────────── */}
-        <section className="py-16 bg-white dark:bg-gray-900">
+        <section className="py-16 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.learnings_label}</p>
             <h2
@@ -425,7 +772,7 @@ export default function CyclisticPage() {
               {c.learnings.map((l, i) => (
                 <div
                   key={i}
-                  className="flex items-start gap-3 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
+                  className="flex items-start gap-3 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700"
                 >
                   <FiCheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{l}</p>
@@ -433,7 +780,6 @@ export default function CyclisticPage() {
               ))}
             </div>
 
-            {/* Bottom CTAs */}
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/#projects"
