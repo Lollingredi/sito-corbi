@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
+import Link from "next/link";
 import { useLang } from "@/context/LanguageContext";
 
 export default function Projects() {
@@ -17,6 +18,7 @@ export default function Projects() {
       description: t("proj1_desc"),
       tags: ["SQL", "Tableau", "Google Data Analytics"],
       github: "https://github.com/corbisieromichele00/cyclistic-bike-share-analysis",
+      live: "/projects/cyclistic-bike-share",
     },
     {
       title: t("proj2_title"),
@@ -94,9 +96,18 @@ export default function Projects() {
                     <FiGithub className="w-4 h-4" /> GitHub
                   </span>
                 )}
-                <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
-                  <FiExternalLink className="w-4 h-4" /> Live
-                </span>
+                {"live" in project && project.live ? (
+                  <Link
+                    href={project.live}
+                    className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-300 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
+                  >
+                    <FiExternalLink className="w-4 h-4" /> Live
+                  </Link>
+                ) : (
+                  <span className="flex items-center gap-1 text-sm text-gray-300 dark:text-gray-600 cursor-not-allowed">
+                    <FiExternalLink className="w-4 h-4" /> Live
+                  </span>
+                )}
               </div>
             </motion.div>
           ))}
