@@ -30,6 +30,13 @@ export default function Projects() {
       description: t("proj3_desc"),
       tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib"],
     },
+    {
+      title: t("proj4_title"),
+      description: t("proj4_desc"),
+      tags: ["R", "dplyr", "ggplot2", "Panel Data", "Econometria"],
+      github: "https://github.com/corbisieromichele00/thesis",
+      live: "/projects/thesis",
+    },
   ];
 
   return (

@@ -61,6 +61,8 @@ export const translations = {
     proj2_desc: "Sviluppo di una dashboard Power BI per il monitoraggio dei KPI aziendali in tempo reale, con integrazione di dati da SQL Server e automazione del reporting mensile.",
     proj3_title: "Segmentazione Clienti con ML",
     proj3_desc: "Progetto di clustering per la segmentazione della base clienti di un e-commerce, utilizzando algoritmi K-Means per identificare profili di acquisto e personalizzare le campagne marketing.",
+    proj4_title: "Regional Misallocation: Italia vs Germania",
+    proj4_desc: "Tesi magistrale (110/110) — analisi econometrica della misallocation regionale comparando il sistema di contrattazione salariale centralizzato italiano con quello flessibile tedesco tramite panel data in R.",
 
     // Skills
     skills_label: "Toolkit",
@@ -158,6 +160,8 @@ export const translations = {
     proj2_desc: "Development of a Power BI dashboard for real-time monitoring of corporate KPIs, integrating data from SQL Server and automating monthly reporting.",
     proj3_title: "Customer Segmentation with ML",
     proj3_desc: "Clustering project to segment the customer base of an e-commerce platform using K-Means algorithms to identify purchase profiles and personalise marketing campaigns.",
+    proj4_title: "Regional Misallocation: Italy vs Germany",
+    proj4_desc: "Master's thesis (110/110) — econometric analysis of regional misallocation comparing Italy's centralised wage-bargaining system with Germany's more flexible one using panel data in R.",
 
     // Skills
     skills_label: "Toolkit",
