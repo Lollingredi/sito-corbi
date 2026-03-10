@@ -87,7 +87,7 @@ export default function Skills() {
                     className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                   >
                     <span className={`text-2xl mt-0.5 flex-shrink-0 ${skill.color}`}>{skill.icon}</span>
-                    <div>
+                    <div className="min-w-0">
                       <div className="font-medium text-gray-700 dark:text-gray-200 text-sm">{skill.name}</div>
                       {"sub" in skill && skill.sub && (
                         <div className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{skill.sub}</div>

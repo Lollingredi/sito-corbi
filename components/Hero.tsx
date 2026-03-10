@@ -32,7 +32,7 @@ export default function Hero() {
             <br />
             <span className="text-indigo-500">Corbisiero</span>
           </h1>
-          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-lg mb-8 leading-relaxed">
+          <p className="text-xl text-gray-500 dark:text-gray-400 max-w-lg mb-8 leading-relaxed break-words">
             {t("hero_tagline_1")}{" "}
             <span className="text-emerald-500 font-semibold">{t("hero_tagline_2")}</span>{" "}
             {t("hero_tagline_3")}{" "}

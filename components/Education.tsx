@@ -90,12 +90,12 @@ export default function Education() {
                 {/* Content */}
                 <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-2">
-                    <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug">{item.title}</h3>
-                    <span className="text-xs text-indigo-500 dark:text-indigo-400 font-semibold whitespace-nowrap bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-full self-start">
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug min-w-0 flex-1">{item.title}</h3>
+                    <span className="text-xs text-indigo-500 dark:text-indigo-400 font-semibold whitespace-nowrap bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-full self-start flex-shrink-0">
                       {item.period}
                     </span>
                   </div>
-                  <p className="text-sm text-indigo-600 font-medium mb-2">{item.institution}</p>
+                  <p className="text-sm text-indigo-600 font-medium mb-2 break-words">{item.institution}</p>
                   {"grade" in item && item.grade && (
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">
                       <span className="font-medium text-gray-700 dark:text-gray-200">{t("edu_grade")}</span> {item.grade}

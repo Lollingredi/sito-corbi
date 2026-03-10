@@ -571,12 +571,12 @@ export default function ThesisPage() {
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center z-10 shadow-sm">
                       <span className="text-white text-xs font-bold">{i + 1}</span>
                     </div>
-                    <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    <div className="flex-1 min-w-0 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
+                      <div className="flex items-start gap-3 mb-2 flex-wrap">
+                        <span className="flex-shrink-0 text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
                           {step.phase}
                         </span>
-                        <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm">{step.title}</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm min-w-0">{step.title}</h3>
                       </div>
                       <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{step.desc}</p>
                     </div>

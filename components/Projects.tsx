@@ -33,7 +33,7 @@ export default function Projects() {
     {
       title: t("proj4_title"),
       description: t("proj4_desc"),
-      tags: ["R", "dplyr", "ggplot2", "Panel Data", "Econometria"],
+      tags: ["Stata", "TeX", "Econometria", "Panel Data"],
       github: "https://github.com/corbisieromichele00/thesis",
       live: "/projects/thesis",
     },
@@ -63,7 +63,7 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {projects.map((project, i) => (
             <motion.div
               key={i}
