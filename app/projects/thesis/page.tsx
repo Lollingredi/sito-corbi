@@ -1,131 +1,189 @@
 "use client";
 
+import { useMemo } from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale, LinearScale, BarElement,
+  Tooltip, Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 import { FiGithub, FiCheckCircle } from "react-icons/fi";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useLang } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
 
-const TAGS = ["R", "dplyr", "ggplot2", "Econometria", "Panel Data", "Analisi Regionale"];
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+/* ── Palette (matches site tokens) ──────────────────────────── */
+const INDIGO = "#6366f1";
+const INDIGO_LIGHT = "#818cf8";
+const EMERALD = "#10b981";
+const EMERALD_LIGHT = "#34d399";
+const SLATE = "#94a3b8";
+
+const TAGS = [
+  "Stata", "TeX", "Econometria", "Panel Data",
+  "Analisi Regionale", "Analisi Controfattuale",
+];
+
+/* ── Real thesis data ────────────────────────────────────────── */
+// Wage-productivity elasticity (log GVA → nominal wages)
+const ELASTICITY_VALUES = [0.195, 0.137, 0.739, 0.380];
+const ELASTICITY_SE     = [0.013, 0.019, 0.013, 0.008];
+
+// Counterfactual employment rates (%)
+const CF_STATUS_QUO = [57.32, 71.00, 64.86];
+const CF_SCENARIO_1 = [70.17, 71.00, 70.63];
+const CF_SCENARIO_2 = [71.24, 71.00, 71.11];
+
+/* ── Bilingual content ───────────────────────────────────────── */
 const CONTENT = {
   it: {
     breadcrumb_projects: "Progetti",
-    breadcrumb_self: "Tesi Magistrale",
-    back: "← Progetti",
-    period: "Ott 2022 – Dic 2024",
-    grade_label: "Voto",
-    grade: "110/110",
-    uni: "Università di Verona & Julius-Maximilians-Universität Würzburg",
-    subtitle: "Tesi di Laurea Magistrale · Doppia Laurea in Economics and Data Analysis",
+    breadcrumb_self:     "Tesi Magistrale",
+    back:                "← Progetti",
+    period:              "Ott 2022 – Dic 2024",
+    grade_label:         "Voto",
+    grade:               "110/110",
+    supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
+    subtitle:            "Tesi di Laurea Magistrale · Economics and Data Analysis",
 
-    overview_label: "Contesto",
+    /* Overview */
+    overview_label: "Panoramica",
     overview_title: "Il Progetto di Ricerca",
-    context_label: "Domanda di Ricerca",
-    context: "In che misura il sistema di contrattazione salariale influenza la misallocation regionale? Confronto tra il modello centralizzato italiano e quello flessibile tedesco.",
-    academic_label: "Contesto Accademico",
-    academic: "Tesi magistrale discussa nell'ambito della doppia laurea tra Università di Verona e Julius-Maximilians-Universität Würzburg. Commissione internazionale, valutazione 110/110.",
-    framework_label: "Framework Teorico",
-    framework: "Riferimento al framework di Boeri, Ichino, Moretti & Posch (JEEA, 2021), che modella l'impatto dei salari nazionali sulla produttività regionale.",
+    overview_body:
+      "Tesi magistrale della doppia laurea tra Università di Verona e Julius-Maximilian Universität (Würzburg), con voto 110/110. La ricerca indaga in che misura il sistema di contrattazione salariale genera misallocation regionale, confrontando il modello centralizzato italiano con quello flessibile tedesco — replicando ed estendendo il framework di Boeri, Ichino, Moretti & Posch (JEEA 2021). I dati sono provinciali NUTS-3 su salari, GVA (Gross Value Added) e occupazione per Italia e Germania. Tutta l'analisi è stata condotta in Stata con output LaTeX.",
 
+    /* Key findings */
     findings_label: "Risultati",
-    findings_title: "Key Findings",
+    findings_title:  "Key Findings",
     findings: [
       {
-        stat: "IT ≈ 0",
-        label: "Salari vs Produttività in Italia",
-        desc: "In Italia, i contratti nazionali creano una quasi-assenza di correlazione tra salari locali e produttività provinciale: le retribuzioni restano uniformi indipendentemente dalla performance territoriale.",
+        stat: "4–5×",
+        label: "Elasticità salario-produttività: Germania vs Italia",
+        desc:  "Il coefficiente log GVA→salari è 0.195 (Sud IT) e 0.137 (Nord IT) contro 0.739 (Ovest DE) e 0.380 (Est DE). La Germania mostra una correlazione 4–5× più forte tra produttività locale e salari nominali.",
       },
       {
-        stat: "DE > IT",
-        label: "Flessibilità Salariale in Germania",
-        desc: "Il sistema tedesco, più decentralizzato, mostra un legame più stretto tra salari e produttività a livello provinciale, consentendo un'allocazione più efficiente delle risorse.",
+        stat: "+12.85 p.p.",
+        label: "Il costo del sistema centralizzato",
+        desc:  "Analisi controfattuale: con la flessibilità salariale tedesca, il tasso di occupazione nel Sud salirebbe da 57.32% a ~70–71% (+12.85 p.p.), e il reddito da lavoro pro-capite da €766 a €881/mese (+7.5%).",
       },
       {
-        stat: "N/S",
-        label: "Gap Geografico Comune",
-        desc: "Entrambi i paesi presentano disparità geografiche simili nella produttività (Nord/Sud in IT; Ovest/Est in DE), ma con esiti salariali divergenti per effetto dei diversi sistemi di contrattazione.",
+        stat: "€0.32",
+        label: "Compressione salariale Nord-Sud in Italia",
+        desc:  "In Italia il gap salariale orario Nord-Sud è solo €0.32 (€8.68 vs €8.36) nonostante differenze di produttività ben più marcate. Il sistema tedesco produce gap più ampi ma un'allocazione del lavoro più efficiente.",
       },
     ],
 
+    /* Charts */
+    charts_label:      "Dati",
+    chart1_title:      "Elasticità Salario-Produttività per Area",
+    chart1_desc:       "Coefficiente log GVA → salari nominali · regressione panel con effetti fissi",
+    chart1_note:       "Fonte: elaborazione propria su dati provinciali NUTS-3",
+    chart1_se_prefix:  "SE:",
+    chart2_title:      "Analisi Controfattuale — Tasso di Occupazione (%)",
+    chart2_desc:       "Effetti della flessibilità salariale tedesca applicata alle province italiane",
+    chart2_note:       "CF Scenario 1: top 0% · CF Scenario 2: variante top 0%",
+    chart_areas_label: ["IT Sud", "IT Nord", "DE Ovest", "DE Est"],
+    chart_cf_areas:    ["Sud IT", "Nord IT", "Italia"],
+    legend_status_quo: "Status quo",
+    legend_cf1:        "CF Scenario 1",
+    legend_cf2:        "CF Scenario 2",
+
+    /* Methodology */
     process_label: "Metodologia",
     process_title: "Processo di Analisi",
     process_steps: [
       {
         phase: "Dati",
         title: "Raccolta dei dati",
-        desc: "Raccolta di dataset provinciali su salari, occupazione e produttività per Italia e Germania da fonti istituzionali (ISTAT, Destatis, Eurostat). Copertura temporale pluriennale.",
+        desc:  "Dataset provinciali NUTS-3: GVA, salari, occupazione per province italiane e tedesche. Fonti: Eurostat, ISTAT, Destatis. Copertura temporale pluriennale.",
       },
       {
         phase: "Wrangling",
-        title: "Data wrangling in R",
-        desc: "Pulizia e manipolazione dei dati con dplyr e tidyr: gestione dei valori mancanti, normalizzazione degli indicatori, costruzione del panel dataset bilanciato a livello provinciale.",
+        title: "Data wrangling in Stata",
+        desc:  "Pulizia e merge dei dataset, correzione per lavoro informale (Sud Italia), costruzione variabili panel per provincia-anno. Normalizzazione degli indicatori salariali.",
       },
       {
-        phase: "Econometria",
-        title: "Analisi econometrica",
-        desc: "Regressioni panel con effetti fissi e random, statistiche descrittive comparative, test di Hausman per la specifica del modello e analisi cross-country dei coefficienti.",
+        phase: "Regressione",
+        title: "Analisi di regressione panel",
+        desc:  "Regressioni panel OLS con effetti fissi provinciali e temporali. Stima dell'elasticità salario-produttività per area geografica (Nord/Sud IT; Ovest/Est DE) e settore manifatturiero.",
       },
       {
-        phase: "Visualizzazione",
-        title: "Mappe e grafici con ggplot2",
-        desc: "Mappe provinciali e grafici comparativi realizzati con ggplot2, per illustrare la distribuzione geografica della produttività e dei salari in Italia e Germania.",
+        phase: "Controfattuale",
+        title: "Analisi controfattuale",
+        desc:  "Simulazione: cosa succederebbe se l'Italia adottasse la flessibilità salariale tedesca? Tre scenari (top 0%, 5%, 10%, 20% delle province) con effetti su salari, occupazione e reddito aggregato.",
+      },
+      {
+        phase: "LaTeX",
+        title: "Scrittura & output LaTeX",
+        desc:  "Tesi completa con tabelle e figure generate automaticamente da Stata, supervisione del Prof. Michael Pflüger (Julius-Maximilian Universität Würzburg). Voto finale 110/110.",
       },
     ],
 
-    stack_label: "Tecnologie",
-    stack_title: "Stack Tecnologico",
-    stack_items: ["R", "dplyr", "ggplot2", "tidyr", "Panel Data Econometrics", "Regression Analysis", "Hausman Test", "LaTeX"],
-
+    /* Learnings */
     learnings_label: "Takeaway",
     learnings_title: "Risultati & Apprendimenti",
     learnings: [
-      "Primo progetto di ricerca econometrica su dati reali a livello provinciale (~NUTS-3)",
-      "Esperienza end-to-end: dalla raccolta dati alla presentazione davanti a commissione internazionale",
-      "Analisi comparativa cross-country su sistemi istituzionali diversi (IT vs DE)",
-      "Padronanza di R per econometria e visualizzazione avanzata con ggplot2",
-      "Redazione della tesi in formato accademico internazionale (doppia laurea)",
+      "Prima esperienza completa di ricerca econometrica su dati reali a livello provinciale (NUTS-3)",
+      "Gestione di dataset eterogenei multi-paese con pulizia avanzata in Stata",
+      "Analisi panel con effetti fissi e costruzione di scenari controfattuali quantitativi",
+      "Presentazione davanti a commissione accademica internazionale — doppia laurea Verona–Würzburg",
+      "Output accademico formale: tesi in LaTeX con tabelle e figure automatizzate da Stata",
     ],
   },
+
   en: {
     breadcrumb_projects: "Projects",
-    breadcrumb_self: "Master's Thesis",
-    back: "← Projects",
-    period: "Oct 2022 – Dec 2024",
-    grade_label: "Grade",
-    grade: "110/110",
-    uni: "University of Verona & Julius-Maximilians-Universität Würzburg",
-    subtitle: "Master's Thesis · Double Master's Degree in Economics and Data Analysis",
+    breadcrumb_self:     "Master's Thesis",
+    back:                "← Projects",
+    period:              "Oct 2022 – Dec 2024",
+    grade_label:         "Grade",
+    grade:               "110/110",
+    supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
+    subtitle:            "Master's Thesis · Economics and Data Analysis",
 
-    overview_label: "Context",
+    overview_label: "Overview",
     overview_title: "The Research Project",
-    context_label: "Research Question",
-    context: "To what extent does the wage-bargaining system influence regional misallocation? A comparison between Italy's centralised model and Germany's more flexible approach.",
-    academic_label: "Academic Context",
-    academic: "Master's thesis defended as part of a double degree programme between the University of Verona and Julius-Maximilians-Universität Würzburg. International examination board, grade 110/110.",
-    framework_label: "Theoretical Framework",
-    framework: "Built on the framework by Boeri, Ichino, Moretti & Posch (JEEA, 2021), which models the impact of national wage agreements on regional productivity.",
+    overview_body:
+      "Master's thesis for a double degree between the University of Verona and Julius-Maximilian Universität Würzburg, graded 110/110. The research investigates how wage-bargaining systems generate regional misallocation, comparing Italy's centralised model with Germany's more flexible approach — replicating and extending the framework of Boeri, Ichino, Moretti & Posch (JEEA 2021). Data are provincial NUTS-3 observations on wages, GVA (Gross Value Added) and employment for Italy and Germany. All analysis was conducted in Stata with LaTeX output.",
 
     findings_label: "Results",
-    findings_title: "Key Findings",
+    findings_title:  "Key Findings",
     findings: [
       {
-        stat: "IT ≈ 0",
-        label: "Wages vs Productivity in Italy",
-        desc: "In Italy, national collective agreements create a near-zero correlation between local wages and provincial productivity: remuneration remains uniform regardless of territorial performance.",
+        stat: "4–5×",
+        label: "Wage-productivity elasticity: Germany vs Italy",
+        desc:  "The log GVA→wages coefficient is 0.195 (South IT) and 0.137 (North IT) against 0.739 (West DE) and 0.380 (East DE). Germany shows a 4–5× stronger correlation between local productivity and nominal wages.",
       },
       {
-        stat: "DE > IT",
-        label: "Wage Flexibility in Germany",
-        desc: "Germany's more decentralised system shows a closer link between wages and provincial productivity, allowing for a more efficient allocation of resources across regions.",
+        stat: "+12.85 p.p.",
+        label: "The cost of centralised bargaining",
+        desc:  "Counterfactual analysis: with German wage flexibility, the employment rate in Southern Italy would rise from 57.32% to ~70–71% (+12.85 p.p.), and per-capita labour income from €766 to €881/month (+7.5%).",
       },
       {
-        stat: "N/S",
-        label: "Common Geographic Gap",
-        desc: "Both countries show similar geographic productivity disparities (North/South in IT; West/East in DE), but with diverging wage outcomes due to their different bargaining systems.",
+        stat: "€0.32",
+        label: "North-South wage compression in Italy",
+        desc:  "Italy's hourly North-South wage gap is only €0.32 (€8.68 vs €8.36) despite far larger productivity differences. Germany's system produces wider wage gaps but more efficient labour allocation.",
       },
     ],
+
+    charts_label:      "Data",
+    chart1_title:      "Wage-Productivity Elasticity by Area",
+    chart1_desc:       "Log GVA → nominal wages coefficient · panel regression with fixed effects",
+    chart1_note:       "Source: own elaboration on NUTS-3 provincial data",
+    chart1_se_prefix:  "SE:",
+    chart2_title:      "Counterfactual Analysis — Employment Rate (%)",
+    chart2_desc:       "Effects of applying German wage flexibility to Italian provinces",
+    chart2_note:       "CF Scenario 1: top 0% · CF Scenario 2: top 0% variant",
+    chart_areas_label: ["IT South", "IT North", "DE West", "DE East"],
+    chart_cf_areas:    ["South IT", "North IT", "Italy"],
+    legend_status_quo: "Status quo",
+    legend_cf1:        "CF Scenario 1",
+    legend_cf2:        "CF Scenario 2",
 
     process_label: "Methodology",
     process_title: "Analysis Process",
@@ -133,44 +191,175 @@ const CONTENT = {
       {
         phase: "Data",
         title: "Data collection",
-        desc: "Collection of provincial datasets on wages, employment and productivity for Italy and Germany from institutional sources (ISTAT, Destatis, Eurostat). Multi-year temporal coverage.",
+        desc:  "NUTS-3 provincial datasets: GVA, wages, employment for Italian and German provinces. Sources: Eurostat, ISTAT, Destatis. Multi-year temporal coverage.",
       },
       {
         phase: "Wrangling",
-        title: "Data wrangling in R",
-        desc: "Data cleaning and manipulation with dplyr and tidyr: handling missing values, normalising indicators, and building a balanced panel dataset at the provincial level.",
+        title: "Data wrangling in Stata",
+        desc:  "Dataset cleaning and merging, correction for informal labour (Southern Italy), construction of province-year panel variables. Normalisation of wage indicators.",
       },
       {
-        phase: "Econometrics",
-        title: "Econometric analysis",
-        desc: "Panel regressions with fixed and random effects, comparative descriptive statistics, Hausman test for model specification, and cross-country coefficient analysis.",
+        phase: "Regression",
+        title: "Panel regression analysis",
+        desc:  "Panel OLS regressions with provincial and time fixed effects. Estimation of wage-productivity elasticity by geographic area (North/South IT; West/East DE) and manufacturing sector.",
       },
       {
-        phase: "Visualisation",
-        title: "Maps and charts with ggplot2",
-        desc: "Provincial maps and comparative charts built with ggplot2 to illustrate the geographic distribution of productivity and wages across Italy and Germany.",
+        phase: "Counterfactual",
+        title: "Counterfactual analysis",
+        desc:  "Simulation: what would happen if Italy adopted German wage flexibility? Three scenarios (top 0%, 5%, 10%, 20% of provinces) with effects on wages, employment and aggregate income.",
+      },
+      {
+        phase: "LaTeX",
+        title: "Writing & LaTeX output",
+        desc:  "Full thesis with tables and figures automatically generated from Stata, supervised by Prof. Michael Pflüger (Julius-Maximilian Universität Würzburg). Final grade 110/110.",
       },
     ],
-
-    stack_label: "Technologies",
-    stack_title: "Tech Stack",
-    stack_items: ["R", "dplyr", "ggplot2", "tidyr", "Panel Data Econometrics", "Regression Analysis", "Hausman Test", "LaTeX"],
 
     learnings_label: "Takeaway",
     learnings_title: "Results & Learnings",
     learnings: [
-      "First econometric research project on real provincial-level data (~NUTS-3)",
-      "End-to-end experience: from data collection to presentation before an international examination board",
-      "Cross-country comparative analysis of different institutional systems (IT vs DE)",
-      "Proficiency in R for econometrics and advanced visualisation with ggplot2",
-      "Academic thesis written in international format as part of a double degree programme",
+      "First complete econometric research project on real provincial-level data (NUTS-3)",
+      "Management of heterogeneous multi-country datasets with advanced cleaning in Stata",
+      "Panel analysis with fixed effects and construction of quantitative counterfactual scenarios",
+      "Presentation before an international academic examination board — double degree Verona–Würzburg",
+      "Formal academic output: thesis in LaTeX with tables and figures automated from Stata",
     ],
   },
 };
 
+/* ── Chart card wrapper ──────────────────────────────────────── */
+function ChartCard({
+  title, desc, note, children,
+}: {
+  title: string; desc: string; note?: string; children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6">
+      <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-0.5">{title}</h3>
+      <p className="text-xs font-mono text-gray-400 dark:text-gray-500 mb-5">{desc}</p>
+      {children}
+      {note && (
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-3 font-mono">{note}</p>
+      )}
+    </div>
+  );
+}
+
+/* ── Page ────────────────────────────────────────────────────── */
 export default function ThesisPage() {
   const { lang } = useLang();
+  const { dark } = useTheme();
   const c = CONTENT[lang];
+
+  /* Chart theme */
+  const grid  = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const muted = dark ? "#6b7280" : "#9ca3af";
+  const tt    = useMemo(() => ({
+    backgroundColor: dark ? "#1f2937" : "#ffffff",
+    borderColor:     dark ? "#374151" : "#e5e7eb",
+    titleColor:      dark ? "#f3f4f6" : "#111827",
+    bodyColor:       dark ? "#d1d5db" : "#374151",
+    borderWidth: 1,
+    padding: 10,
+  }), [dark]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const lbl = (fn: (ctx: any) => string) => fn;
+
+  /* Chart 1 — Elasticity */
+  const elasticityData = {
+    labels: c.chart_areas_label,
+    datasets: [{
+      label: "Elasticità",
+      data: ELASTICITY_VALUES,
+      backgroundColor: [INDIGO, INDIGO_LIGHT, EMERALD, EMERALD_LIGHT],
+      borderRadius: 6,
+      borderSkipped: false,
+    }],
+  };
+  const elasticityOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        ...tt,
+        callbacks: {
+          label: lbl(ctx => ` ${ctx.raw.toFixed(3)}`),
+          afterLabel: lbl(ctx => ` ${c.chart1_se_prefix} ${ELASTICITY_SE[ctx.dataIndex].toFixed(3)}`),
+        },
+      },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: {
+        grid: { color: grid },
+        ticks: { color: muted, font: { size: 11 } },
+        min: 0,
+        max: 0.85,
+      },
+    },
+  };
+
+  /* Chart 2 — Counterfactual */
+  const cfData = {
+    labels: c.chart_cf_areas,
+    datasets: [
+      {
+        label: c.legend_status_quo,
+        data: CF_STATUS_QUO,
+        backgroundColor: SLATE,
+        borderRadius: 4,
+      },
+      {
+        label: c.legend_cf1,
+        data: CF_SCENARIO_1,
+        backgroundColor: INDIGO,
+        borderRadius: 4,
+      },
+      {
+        label: c.legend_cf2,
+        data: CF_SCENARIO_2,
+        backgroundColor: EMERALD,
+        borderRadius: 4,
+      },
+    ],
+  };
+  const cfOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: dark ? "#d1d5db" : "#374151",
+          font: { size: 11 },
+          usePointStyle: true,
+          pointStyleWidth: 8,
+        },
+      },
+      tooltip: {
+        ...tt,
+        callbacks: {
+          label: lbl(ctx => {
+            const base = CF_STATUS_QUO[ctx.dataIndex];
+            const diff = (ctx.raw - base).toFixed(2);
+            const sign = ctx.raw > base ? `+${diff}` : diff;
+            return ` ${ctx.dataset.label}: ${ctx.raw.toFixed(2)}%${ctx.datasetIndex > 0 ? ` (${sign} p.p.)` : ""}`;
+          }),
+        },
+      },
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      y: {
+        grid: { color: grid },
+        ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + "%" },
+        min: 50,
+        max: 80,
+      },
+    },
+  };
 
   return (
     <>
@@ -181,7 +370,6 @@ export default function ThesisPage() {
         <section className="py-16 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
 
-            {/* Breadcrumb */}
             <nav className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6">
               <Link href="/" className="hover:text-indigo-500 transition-colors">Home</Link>
               <span>/</span>
@@ -202,11 +390,11 @@ export default function ThesisPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Period + grade row */}
+              {/* Period + grade badge */}
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest font-mono">{c.period}</p>
-                <span className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full">
-                  ★ {c.grade_label}: {c.grade}
+                <span className="inline-flex items-center gap-1.5 bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  {c.grade_label}: {c.grade}
                 </span>
               </div>
 
@@ -219,11 +407,11 @@ export default function ThesisPage() {
               </h1>
 
               <p className="text-base text-gray-500 dark:text-gray-400 mb-1">{c.subtitle}</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 font-mono mb-6">{c.uni}</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 font-mono mb-6">{c.supervisor}</p>
 
               {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-8">
-                {TAGS.map((tag) => (
+                {TAGS.map(tag => (
                   <span
                     key={tag}
                     className="text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full"
@@ -250,26 +438,14 @@ export default function ThesisPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.overview_label}</p>
             <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
+              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {c.overview_title}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              {[
-                { label: c.context_label,   content: c.context   },
-                { label: c.academic_label,  content: c.academic  },
-                { label: c.framework_label, content: c.framework },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700"
-                >
-                  <div className="text-xs font-bold text-indigo-500 uppercase tracking-wider mb-3">{item.label}</div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{item.content}</p>
-                </div>
-              ))}
-            </div>
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base">
+              {c.overview_body}
+            </p>
           </div>
         </section>
 
@@ -293,8 +469,8 @@ export default function ThesisPage() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="bg-white dark:bg-gray-700 rounded-2xl p-6 border border-gray-100 dark:border-gray-600 shadow-sm"
                 >
-                  <div className="text-3xl font-bold text-indigo-500 mb-1 font-mono">{f.stat}</div>
-                  <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3">{f.label}</div>
+                  <div className="text-3xl font-bold text-indigo-500 mb-1 font-mono leading-none">{f.stat}</div>
+                  <div className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3 mt-2">{f.label}</div>
                   <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
@@ -302,8 +478,76 @@ export default function ThesisPage() {
           </div>
         </section>
 
-        {/* ── METHODOLOGY ────────────────────────────────────── */}
+        {/* ── INTERACTIVE CHARTS ─────────────────────────────── */}
         <section className="py-16 bg-white dark:bg-gray-900">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.charts_label}</p>
+            <h2
+              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {lang === "it" ? "Dati della Ricerca" : "Research Data"}
+            </h2>
+
+            <div className="space-y-5">
+              {/* Chart 1 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45 }}
+              >
+                <ChartCard
+                  title={c.chart1_title}
+                  desc={c.chart1_desc}
+                  note={c.chart1_note}
+                >
+                  {/* Colour legend */}
+                  <div className="flex flex-wrap gap-4 mb-4 text-xs font-mono">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm inline-block" style={{ background: INDIGO }} />
+                      IT Sud / IT Nord
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-sm inline-block" style={{ background: EMERALD }} />
+                      DE Ovest / DE Est
+                    </span>
+                  </div>
+                  <div className="h-64">
+                    <Bar
+                      data={elasticityData}
+                      options={elasticityOpts as Parameters<typeof Bar>[0]["options"]}
+                    />
+                  </div>
+                </ChartCard>
+              </motion.div>
+
+              {/* Chart 2 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, delay: 0.1 }}
+              >
+                <ChartCard
+                  title={c.chart2_title}
+                  desc={c.chart2_desc}
+                  note={c.chart2_note}
+                >
+                  <div className="h-72">
+                    <Bar
+                      data={cfData}
+                      options={cfOpts as Parameters<typeof Bar>[0]["options"]}
+                    />
+                  </div>
+                </ChartCard>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── METHODOLOGY ────────────────────────────────────── */}
+        <section className="py-16 bg-gray-50 dark:bg-gray-800">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.process_label}</p>
             <h2
@@ -327,7 +571,7 @@ export default function ThesisPage() {
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center z-10 shadow-sm">
                       <span className="text-white text-xs font-bold">{i + 1}</span>
                     </div>
-                    <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
+                    <div className="flex-1 bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-700">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
                           {step.phase}
@@ -343,42 +587,7 @@ export default function ThesisPage() {
           </div>
         </section>
 
-        {/* ── TECH STACK ─────────────────────────────────────── */}
-        <section className="py-16 bg-gray-50 dark:bg-gray-800">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.stack_label}</p>
-            <h2
-              className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              {c.stack_title}
-            </h2>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4 }}
-              className="bg-white dark:bg-gray-700 rounded-2xl p-8 border border-gray-100 dark:border-gray-600 shadow-sm"
-            >
-              <div className="flex flex-wrap gap-3">
-                {c.stack_items.map((item, i) => (
-                  <motion.span
-                    key={item}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: i * 0.06 }}
-                    className="text-sm font-semibold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full border border-indigo-100 dark:border-indigo-800"
-                  >
-                    {item}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ── LEARNINGS ──────────────────────────────────────── */}
+        {/* ── TAKEAWAY ───────────────────────────────────────── */}
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
             <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.learnings_label}</p>
@@ -404,7 +613,6 @@ export default function ThesisPage() {
               ))}
             </div>
 
-            {/* Bottom CTAs */}
             <div className="flex flex-wrap gap-4">
               <Link
                 href="/#projects"
