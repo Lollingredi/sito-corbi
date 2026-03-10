@@ -21,16 +21,6 @@ export default function Projects() {
       live: "/projects/cyclistic-bike-share",
     },
     {
-      title: t("proj2_title"),
-      description: t("proj2_desc"),
-      tags: ["Power BI", "SQL", "DAX", "Excel"],
-    },
-    {
-      title: t("proj3_title"),
-      description: t("proj3_desc"),
-      tags: ["Python", "Scikit-learn", "Pandas", "Matplotlib"],
-    },
-    {
       title: t("proj4_title"),
       description: t("proj4_desc"),
       tags: ["Stata", "TeX", "Econometria", "Panel Data"],
@@ -63,7 +53,7 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project, i) => (
             <motion.div
               key={i}
