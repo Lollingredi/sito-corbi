@@ -94,9 +94,21 @@ export default function Education() {
                 <div className="flex-1 bg-gray-50 dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-2">
                     <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug min-w-0 flex-1">{item.title}</h3>
-                    <span className="text-xs text-indigo-500 dark:text-indigo-400 font-semibold whitespace-nowrap bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-full self-start flex-shrink-0">
-                      {item.period}
-                    </span>
+                    <div className="flex flex-col items-start sm:items-end gap-2 flex-shrink-0">
+                      <span className="text-xs text-indigo-500 dark:text-indigo-400 font-semibold whitespace-nowrap bg-indigo-50 dark:bg-indigo-900/30 px-2 py-1 rounded-full">
+                        {item.period}
+                      </span>
+                      {"diploma" in item && item.diploma && (
+                        <a
+                          href={item.diploma}
+                          download
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-full transition-colors whitespace-nowrap"
+                        >
+                          <FiDownload className="w-3.5 h-3.5" />
+                          {t("edu_download")}
+                        </a>
+                      )}
+                    </div>
                   </div>
                   <p className="text-sm text-indigo-600 font-medium mb-2 break-words">{item.institution}</p>
                   {"grade" in item && item.grade && (
@@ -117,18 +129,6 @@ export default function Education() {
                   )}
                   {"note" in item && item.note && (
                     <p className="text-sm text-gray-500 dark:text-gray-400">{item.note}</p>
-                  )}
-                  {"diploma" in item && item.diploma && (
-                    <div className="mt-3">
-                      <a
-                        href={item.diploma}
-                        download
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-full transition-colors"
-                      >
-                        <FiDownload className="w-3.5 h-3.5" />
-                        {t("edu_download")}
-                      </a>
-                    </div>
                   )}
                 </div>
               </motion.div>
