@@ -111,6 +111,15 @@ const CONTENT = {
       "Padronanza di BigQuery per l'aggregazione di grandi volumi di dati",
     ],
 
+    intro_title: "Il Progetto",
+    intro_text: "Cyclistic è un servizio di bike-sharing di Chicago con oltre 5.800 biciclette e 692 stazioni. Il progetto nasce da una domanda di business concreta: in che modo i casual rider e i membri annuali usano le biciclette in modo diverso? Capirlo è essenziale perché i membri annuali sono significativamente più redditizi per l'azienda rispetto ai casual rider, e il team marketing vuole identificare le leve per incentivare la conversione.",
+    intro_dataset: "Per rispondere, ho analizzato 4,61 milioni di corse registrate nel 2023. I dati sono stati puliti e aggregati con SQL su BigQuery, poi visualizzati con Tableau. Qui sotto trovi i grafici interattivi che documentano l'intero percorso di analisi.",
+    tabs_note_title: "Come leggere questa analisi",
+    tabs_note: "I grafici sono organizzati in quattro aree tematiche: Durata Corse (quanto durano le corse per tipo di utente e di bici), Pattern Settimanale (come cambia il comportamento giorno per giorno), Trend Mensile (la stagionalità nel corso dell'anno), e Tabelle Dati (i dati grezzi aggregati, filtrabili e ordinabili). La scheda Insights raccoglie le conclusioni e le raccomandazioni per il business.",
+    conclusion_title: "Conclusioni",
+    conclusion_text: "L'analisi rivela due profili d'uso nettamente distinti. I members usano le bici in modo regolare e funzionale — principalmente per il commute nei giorni feriali, con corse brevi di circa 12 minuti. I casual rider hanno invece un comportamento orientato al leisure: corse più lunghe (~28 min), concentrate nel fine settimana e nei mesi estivi, quando rappresentano oltre il 58% delle loro corse annuali.",
+    conclusion_opportunity: "Questo gap comportamentale è un'opportunità di marketing concreta. Una strategia che valorizzi l'abbonamento anche per usi leisure e weekend — con campagne estive e touchpoint nelle stazioni ad alto traffico casual — potrebbe convertire una quota significativa degli 1,87 milioni di casual rider in abbonati annuali, impatto diretto sui ricavi di Cyclistic.",
+
     months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
     days:   ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"],
     bike_types: ["Classic Bike", "Electric Bike"],
@@ -182,6 +191,15 @@ const CONTENT = {
       "Structured presentation of results for a non-technical audience",
       "Proficiency with BigQuery for aggregating large data volumes",
     ],
+
+    intro_title: "The Project",
+    intro_text: "Cyclistic is a fictional bike-share service in Chicago with over 5,800 bicycles and 692 stations. The project starts from a concrete business question: how do casual riders and annual members use bikes differently? Understanding this is essential because annual members are significantly more profitable for the company than casual riders, and the marketing team wants to identify the levers to drive conversion.",
+    intro_dataset: "To answer this, I analysed 4.61 million rides recorded in 2023. Data was cleaned and aggregated with SQL on BigQuery, then visualised with Tableau. The interactive charts below document the full analysis journey.",
+    tabs_note_title: "How to read this analysis",
+    tabs_note: "The charts are organised into four thematic areas: Ride Duration (how long trips last by user type and bike type), Weekly Patterns (how behaviour changes day by day), Seasonal Trends (seasonality across the year), and Data Tables (aggregated raw data, filterable and sortable). The Insights tab collects the key findings and business recommendations.",
+    conclusion_title: "Conclusions",
+    conclusion_text: "The analysis reveals two clearly distinct usage profiles. Members use bikes in a regular, functional way — primarily for weekday commuting, with short trips of around 12 minutes. Casual riders, on the other hand, exhibit leisure-oriented behaviour: longer trips (~28 min), concentrated at weekends and in summer months, when they account for more than 58% of their annual rides.",
+    conclusion_opportunity: "This behavioural gap is a concrete marketing opportunity. A strategy that highlights the value of membership for leisure and weekend use — with summer campaigns and touchpoints at high casual-traffic stations — could convert a meaningful share of the 1.87 million casual riders into annual members, directly impacting Cyclistic's revenue.",
 
     months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     days:   ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
@@ -511,6 +529,23 @@ export default function CyclisticPage() {
           </div>
         </section>
 
+        {/* ── INTRODUCTION ───────────────────────────────────── */}
+        <section className="border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.1 }}>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4" style={{ fontFamily: "var(--font-display)" }}>
+                {c.intro_title}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">
+                {c.intro_text}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                {c.intro_dataset}
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
         {/* ── STATS ROW ──────────────────────────────────────── */}
         <section className="border-b border-gray-100 dark:border-gray-700">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
@@ -523,6 +558,17 @@ export default function CyclisticPage() {
             </div>
           </div>
         </section>
+
+        {/* ── TABS EXPLANATION ───────────────────────────────── */}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 pb-2">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/40 rounded-2xl px-6 py-4 flex gap-4">
+            <span className="text-indigo-400 text-lg flex-shrink-0 mt-0.5">ⓘ</span>
+            <div>
+              <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-1">{c.tabs_note_title}</p>
+              <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">{c.tabs_note}</p>
+            </div>
+          </div>
+        </div>
 
         {/* ── TAB NAV ────────────────────────────────────────── */}
         <div className="sticky top-16 z-20 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
@@ -809,6 +855,42 @@ export default function CyclisticPage() {
           )}
 
         </div>
+
+        {/* ── CONCLUSION ─────────────────────────────────────── */}
+        <section className="border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+            <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6" style={{ fontFamily: "var(--font-display)" }}>
+                {c.conclusion_title}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 flex-shrink-0" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    <span className="text-xs font-mono uppercase tracking-widest text-gray-400 dark:text-gray-500">Members vs Casual</span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{c.conclusion_text}</p>
+                </div>
+                <div className="bg-indigo-500 rounded-2xl p-6">
+                  <p className="text-xs font-mono uppercase tracking-widest text-indigo-200 mb-3">Opportunità</p>
+                  <p className="text-sm text-white leading-relaxed">{c.conclusion_opportunity}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4 mt-8">
+                <Link href="/#projects" className="inline-flex items-center gap-2 border-2 border-indigo-500 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 font-semibold px-6 py-3 rounded-full transition-colors text-sm">
+                  {c.back}
+                </Link>
+                <a href="https://github.com/corbisieromichele00/cyclistic-bike-share-analysis" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-gray-900 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm">
+                  <FiGithub className="w-4 h-4" /> GitHub
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
       </main>
       <Footer />
     </>
