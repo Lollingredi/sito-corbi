@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { FiAward, FiBook } from "react-icons/fi";
+import { FiAward, FiBook, FiDownload } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
 
 export default function Education() {
@@ -18,6 +18,7 @@ export default function Education() {
       period: t("edu_item0_period"),
       note: t("edu_item0_note"),
       icon: "award" as const,
+      diploma: "/google_certificate.pdf",
     },
     {
       title: t("edu_item1_title"),
@@ -27,6 +28,7 @@ export default function Education() {
       thesis: t("edu_item1_thesis"),
       courses: "Time series and forecasting, International trade and multinational firm",
       icon: "book" as const,
+      diploma: "/double_diploma_uni.pdf",
     },
     {
       title: t("edu_item2_title"),
@@ -35,6 +37,7 @@ export default function Education() {
       grade: "98/110 (1.8)",
       courses: "Economia degli intermediari finanziari, Demografia",
       icon: "book" as const,
+      diploma: "/ancona_diploma.pdf",
     },
     {
       title: t("edu_item3_title"),
@@ -114,6 +117,18 @@ export default function Education() {
                   )}
                   {"note" in item && item.note && (
                     <p className="text-sm text-gray-500 dark:text-gray-400">{item.note}</p>
+                  )}
+                  {"diploma" in item && item.diploma && (
+                    <div className="mt-3">
+                      <a
+                        href={item.diploma}
+                        download
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 px-3 py-1.5 rounded-full transition-colors"
+                      >
+                        <FiDownload className="w-3.5 h-3.5" />
+                        {t("edu_download")}
+                      </a>
+                    </div>
                   )}
                 </div>
               </motion.div>
