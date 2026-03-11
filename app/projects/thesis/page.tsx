@@ -51,6 +51,12 @@ const CONTENT = {
     supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
     subtitle:            "Tesi di Laurea Magistrale · Economics and Data Analysis",
 
+    /* Context (new: frames the economic policy problem) */
+    context_label: "Contesto",
+    context_title: "Il Problema Economico",
+    context_text: "In Italia i contratti collettivi nazionali fissano salari minimi uniformi per settore in tutto il paese, indipendentemente dalla produttività locale. Il risultato è che un operaio metalmeccanico a Milano e uno a Crotone ricevono salari simili, nonostante la produttività delle due aree sia radicalmente diversa. Questa compressione salariale non è neutrale: se il salario minimo è troppo alto rispetto alla produttività locale, le imprese nel Sud non assumono — e chi è disoccupato non si sposta al Nord perché i costi di trasferimento sono elevati. Il mercato del lavoro non si riesce a riequilibrare.",
+    context_question: "La domanda di ricerca è: quanto è grande questo effetto, e cosa succederebbe se l'Italia adottasse un sistema più simile a quello tedesco, dove la contrattazione è più decentrata e i salari si adeguano meglio alla produttività locale?",
+
     /* Overview */
     overview_label: "Panoramica",
     overview_title: "Il Progetto di Ricerca",
@@ -84,9 +90,11 @@ const CONTENT = {
     chart1_desc:       "Coefficiente log GVA → salari nominali · regressione panel con effetti fissi",
     chart1_note:       "Fonte: elaborazione propria su dati provinciali NUTS-3",
     chart1_se_prefix:  "SE:",
+    chart1_explanation: "Questo grafico mostra quanto i salari nominali rispondono alle variazioni di produttività locale (misurata dal GVA). Un coefficiente alto significa che dove la produttività è alta i salari sono alti, e viceversa — esattamente quello che accade in Germania (0.739 Ovest, 0.380 Est). In Italia invece i coefficienti sono molto bassi (0.195 Sud, 0.137 Nord): i salari sono compressi verso una media nazionale indipendentemente da quanto produce ogni territorio. Questo disallineamento scoraggia le assunzioni nelle aree meno produttive e impedisce all'occupazione di riequilibrarsi.",
     chart2_title:      "Analisi Controfattuale — Tasso di Occupazione (%)",
     chart2_desc:       "Effetti della flessibilità salariale tedesca applicata alle province italiane",
     chart2_note:       "CF Scenario 1: top 0% · CF Scenario 2: variante top 0%",
+    chart2_explanation: "Questo grafico risponde alla domanda centrale della tesi: cosa succederebbe ai tassi di occupazione italiani se l'Italia adottasse la flessibilità salariale tedesca? Le barre grigie mostrano la situazione attuale (status quo): il Sud parte da 57.3% di occupazione, il Nord da 71%. I due scenari controfattuali (indigo ed emerald) simulano cosa accadrebbe con salari più flessibili: il Sud salirebbe a ~70–71%, praticamente allineandosi al Nord, con un guadagno di circa 12.85 punti percentuali. In parallelo, il reddito da lavoro pro-capite nel Sud passerebbe da €766 a €881/mese (+7.5%).",
     chart_areas_label: ["IT Sud", "IT Nord", "DE Ovest", "DE Est"],
     chart_cf_areas:    ["Sud IT", "Nord IT", "Italia"],
     legend_status_quo: "Status quo",
@@ -124,6 +132,13 @@ const CONTENT = {
       },
     ],
 
+    /* Conclusion */
+    conclusion_label: "Conclusioni",
+    conclusion_title: "Cosa Ci Insegna Questo Confronto",
+    conclusion_text: "L'evidenza empirica è chiara: il sistema di contrattazione collettiva centralizzato italiano comprime i salari verso una media nazionale, disconnettendo la retribuzione dalla produttività locale. Il risultato è una misallocation del lavoro persistente — il Sud mantiene tassi di occupazione strutturalmente bassi non perché manchino le persone, ma perché il sistema salariale non consente al mercato del lavoro di trovare il proprio equilibrio.",
+    conclusion_germany: "La Germania, con un sistema di contrattazione più decentrato, mostra elasticità salario-produttività 4–5 volte più alte. Questo non significa che il modello tedesco sia privo di svantaggi (produce gap salariali geografici più ampi), ma dimostra che una maggiore flessibilità nella determinazione dei salari locali è associata a mercati del lavoro più efficienti e a tassi di occupazione più elevati nelle aree meno produttive.",
+    conclusion_policy: "Le simulazioni controfattuali suggeriscono che una riforma in direzione di una maggiore flessibilità salariale regionale potrebbe portare il tasso di occupazione del Sud italiano da 57.3% a ~70–71%, riducendo significativamente il divario storico Nord-Sud. Si tratta di un esito ipotetico e condizionato ad assunzioni specifiche, ma fornisce un ordine di grandezza quantitativo rilevante per il dibattito di policy.",
+
     /* Learnings */
     learnings_label: "Takeaway",
     learnings_title: "Risultati & Apprendimenti",
@@ -145,6 +160,11 @@ const CONTENT = {
     grade:               "110/110",
     supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
     subtitle:            "Master's Thesis · Economics and Data Analysis",
+
+    context_label: "Context",
+    context_title: "The Economic Problem",
+    context_text: "In Italy, national collective agreements set uniform minimum wages by sector across the entire country, regardless of local productivity. The result is that a metalworker in Milan and one in Crotone receive similar wages, despite the two areas having radically different productivity levels. This wage compression is not neutral: if the minimum wage is too high relative to local productivity, firms in the South don't hire — and unemployed workers don't relocate North because moving costs are high. The labour market cannot rebalance itself.",
+    context_question: "The research question is: how large is this effect, and what would happen if Italy adopted a system more similar to Germany's, where bargaining is more decentralised and wages adjust more closely to local productivity?",
 
     overview_label: "Overview",
     overview_title: "The Research Project",
@@ -176,9 +196,11 @@ const CONTENT = {
     chart1_desc:       "Log GVA → nominal wages coefficient · panel regression with fixed effects",
     chart1_note:       "Source: own elaboration on NUTS-3 provincial data",
     chart1_se_prefix:  "SE:",
+    chart1_explanation: "This chart shows how strongly nominal wages respond to local productivity changes (measured by GVA). A high coefficient means that where productivity is high, wages are high, and vice versa — exactly what happens in Germany (0.739 West, 0.380 East). In Italy, by contrast, coefficients are very low (0.195 South, 0.137 North): wages are compressed towards a national average regardless of how productive each territory is. This misalignment discourages hiring in less productive areas and prevents the labour market from rebalancing itself.",
     chart2_title:      "Counterfactual Analysis — Employment Rate (%)",
     chart2_desc:       "Effects of applying German wage flexibility to Italian provinces",
     chart2_note:       "CF Scenario 1: top 0% · CF Scenario 2: top 0% variant",
+    chart2_explanation: "This chart answers the central question of the thesis: what would happen to Italian employment rates if Italy adopted German wage flexibility? The grey bars show the current situation (status quo): the South starts at 57.3% employment, the North at 71%. The two counterfactual scenarios (indigo and emerald) simulate what would happen with more flexible wages: the South would rise to ~70–71%, nearly matching the North, a gain of around 12.85 percentage points. In parallel, per-capita labour income in the South would increase from €766 to €881/month (+7.5%).",
     chart_areas_label: ["IT South", "IT North", "DE West", "DE East"],
     chart_cf_areas:    ["South IT", "North IT", "Italy"],
     legend_status_quo: "Status quo",
@@ -214,6 +236,12 @@ const CONTENT = {
         desc:  "Full thesis with tables and figures automatically generated from Stata, supervised by Prof. Michael Pflüger (Julius-Maximilian Universität Würzburg). Final grade 110/110.",
       },
     ],
+
+    conclusion_label: "Conclusions",
+    conclusion_title: "What This Comparison Tells Us",
+    conclusion_text: "The empirical evidence is clear: Italy's centralised collective bargaining system compresses wages towards a national average, decoupling pay from local productivity. The result is persistent labour misallocation — the South maintains structurally low employment rates not because workers are absent, but because the wage system prevents the labour market from finding its own equilibrium.",
+    conclusion_germany: "Germany, with a more decentralised bargaining system, shows wage-productivity elasticities 4–5 times higher. This does not mean the German model is without drawbacks (it produces wider geographical wage gaps), but it demonstrates that greater flexibility in setting local wages is associated with more efficient labour markets and higher employment rates in less productive areas.",
+    conclusion_policy: "The counterfactual simulations suggest that a reform towards greater regional wage flexibility could raise Southern Italy's employment rate from 57.3% to ~70–71%, significantly narrowing the historical North-South divide. This is a hypothetical outcome conditional on specific assumptions, but it provides a quantitatively meaningful order of magnitude for the policy debate.",
 
     learnings_label: "Takeaway",
     learnings_title: "Results & Learnings",
@@ -433,6 +461,24 @@ export default function ThesisPage() {
           </div>
         </section>
 
+        {/* ── CONTEXT ────────────────────────────────────────── */}
+        <section className="py-14 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.1 }}>
+              <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.context_label}</p>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-5" style={{ fontFamily: "var(--font-display)" }}>
+                {c.context_title}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-base mb-4">
+                {c.context_text}
+              </p>
+              <div className="bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500 rounded-r-2xl px-6 py-4">
+                <p className="text-sm text-indigo-700 dark:text-indigo-300 leading-relaxed">{c.context_question}</p>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
         {/* ── OVERVIEW ───────────────────────────────────────── */}
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -520,6 +566,9 @@ export default function ThesisPage() {
                     />
                   </div>
                 </ChartCard>
+                <div className="mt-3 px-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{c.chart1_explanation}</p>
+                </div>
               </motion.div>
 
               {/* Chart 2 */}
@@ -541,6 +590,9 @@ export default function ThesisPage() {
                     />
                   </div>
                 </ChartCard>
+                <div className="mt-3 px-1">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{c.chart2_explanation}</p>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -583,6 +635,62 @@ export default function ThesisPage() {
                   </motion.div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── CONCLUSIONS ────────────────────────────────────── */}
+        <section className="py-16 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <p className="text-indigo-500 font-semibold text-sm uppercase tracking-widest mb-2">{c.conclusion_label}</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8" style={{ fontFamily: "var(--font-display)" }}>
+              {c.conclusion_title}
+            </h2>
+            <div className="space-y-5">
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45 }}
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-indigo-500" />
+                  <span className="text-xs font-mono uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                    {lang === "it" ? "Evidenza empirica" : "Empirical evidence"}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{c.conclusion_text}</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, delay: 0.08 }}
+                className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  <span className="text-xs font-mono uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                    {lang === "it" ? "Il caso tedesco" : "The German case"}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{c.conclusion_germany}</p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, delay: 0.16 }}
+                className="bg-indigo-500 rounded-2xl p-6"
+              >
+                <p className="text-xs font-mono uppercase tracking-widest text-indigo-200 mb-3">
+                  {lang === "it" ? "Implicazioni di policy" : "Policy implications"}
+                </p>
+                <p className="text-sm text-white leading-relaxed">{c.conclusion_policy}</p>
+              </motion.div>
             </div>
           </div>
         </section>
