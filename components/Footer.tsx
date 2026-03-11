@@ -1,5 +1,7 @@
 "use client";
 
+// Sito realizzato da Redi Bako — https://www.rediverse.cc/
+
 import { FiLinkedin, FiGithub, FiMail } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
 
@@ -19,6 +21,18 @@ export default function Footer() {
 
         <div className="text-sm text-center">
           © {year} Michele Corbisiero · {t("footer_role")}
+          <br />
+          <span className="text-xs text-gray-500">
+            Sito realizzato da{" "}
+            <a
+              href="https://www.rediverse.cc/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-300 transition-colors underline"
+            >
+              Redi Bako
+            </a>
+          </span>
         </div>
 
         <div className="flex items-center gap-4">
