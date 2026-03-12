@@ -61,11 +61,15 @@ const CONTENT = {
     stat_casual_dur_sub: "1.7× più lungo dei members",
     stat_total_sub:    "Gen 2025 – Dic 2025",
 
-    tab_duration: "Durata Corse",
-    tab_weekly:   "Pattern Settimanale",
-    tab_monthly:  "Trend Mensile",
-    tab_data:     "Tabelle Dati",
-    tab_insights: "Insights",
+    tab_duration:     "Durata Corse",
+    tab_weekly:       "Pattern Settimanale",
+    tab_monthly:      "Trend Mensile",
+    tab_data:         "Tabelle Dati",
+    tab_insights:     "Insights",
+    tab_presentation: "Presentazione",
+    pres_video_title: "Video presentazione",
+    pres_pdf_title:   "Scarica la presentazione",
+    pres_pdf_btn:     "Scarica PDF",
 
     chart_dur_type_title: "Durata Media per Tipo di Utente",
     chart_dur_type_desc:  "I casual rider percorrono tragitti più lunghi in ogni giorno della settimana",
@@ -138,11 +142,15 @@ const CONTENT = {
     stat_casual_dur_sub: "1.7× longer than members",
     stat_total_sub:    "Jan 2025 – Dec 2025",
 
-    tab_duration: "Ride Duration",
-    tab_weekly:   "Weekly Patterns",
-    tab_monthly:  "Seasonal Trends",
-    tab_data:     "Data Tables",
-    tab_insights: "Insights",
+    tab_duration:     "Ride Duration",
+    tab_weekly:       "Weekly Patterns",
+    tab_monthly:      "Seasonal Trends",
+    tab_data:         "Data Tables",
+    tab_insights:     "Insights",
+    tab_presentation: "Presentation",
+    pres_video_title: "Video presentation",
+    pres_pdf_title:   "Download the presentation",
+    pres_pdf_btn:     "Download PDF",
 
     chart_dur_type_title: "Avg Duration by User Type",
     chart_dur_type_desc:  "Casual riders take longer trips every day of the week",
@@ -231,7 +239,7 @@ function ChartCard({ title, desc, children, full }: { title: string; desc: strin
 }
 
 /* ── Main page ────────────────────────────────────────────────────────────── */
-type Tab = "duration" | "weekly" | "monthly" | "data" | "insights";
+type Tab = "duration" | "weekly" | "monthly" | "data" | "insights" | "presentation";
 type SortKey = "label" | "rides" | "pct";
 type SortDir = "asc" | "desc";
 
@@ -446,11 +454,12 @@ export default function CyclisticPage() {
   }
 
   const TABS: { id: Tab; label: string }[] = [
-    { id: "duration", label: c.tab_duration },
-    { id: "weekly",   label: c.tab_weekly   },
-    { id: "monthly",  label: c.tab_monthly  },
-    { id: "data",     label: c.tab_data     },
-    { id: "insights", label: c.tab_insights },
+    { id: "duration",     label: c.tab_duration     },
+    { id: "weekly",       label: c.tab_weekly       },
+    { id: "monthly",      label: c.tab_monthly      },
+    { id: "data",         label: c.tab_data         },
+    { id: "insights",     label: c.tab_insights     },
+    { id: "presentation", label: c.tab_presentation },
   ];
 
   return (
@@ -767,6 +776,43 @@ export default function CyclisticPage() {
           )}
 
           {/* ── Insights ─────────────────────────────────────── */}
+          {/* ── Presentation ─────────────────────────────────── */}
+          {activeTab === "presentation" && (
+            <motion.div key="presentation" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
+              className="space-y-8">
+
+              {/* Video */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{c.pres_video_title}</h3>
+                </div>
+                <div className="px-6 pb-6">
+                  <video
+                    controls
+                    className="w-full rounded-xl"
+                    src="/VideoPresentazioneBiciCorbi.mp4"
+                  />
+                </div>
+              </div>
+
+              {/* PDF download */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm mb-1">{c.pres_pdf_title}</h3>
+                  <p className="text-xs font-mono text-gray-400 dark:text-gray-500">cyclistic_presentation.pdf</p>
+                </div>
+                <a
+                  href="/cyclistic_presentation.pdf"
+                  download
+                  className="inline-flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold px-6 py-3 rounded-full transition-colors text-sm flex-shrink-0"
+                >
+                  {c.pres_pdf_btn}
+                </a>
+              </div>
+
+            </motion.div>
+          )}
+
           {activeTab === "insights" && (
             <motion.div key="insights" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
               className="space-y-6">
