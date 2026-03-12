@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { SiPython, SiR } from "react-icons/si";
-import { TbFileExcel, TbSql, TbChartBar, TbLanguage } from "react-icons/tb";
+import { TbFileExcel, TbSql, TbChartBar, TbLanguage, TbChartHistogram } from "react-icons/tb";
 import { useLang } from "@/context/LanguageContext";
 
 export default function Skills() {
@@ -19,6 +19,7 @@ export default function Skills() {
         { name: "SQL", sub: "JOIN, GROUP BY, window functions", icon: <TbSql />, color: "text-blue-500" },
         { name: "Python", sub: "pandas, NumPy, matplotlib, scikit-learn", icon: <SiPython />, color: "text-yellow-500" },
         { name: "R", sub: "dplyr, ggplot2", icon: <SiR />, color: "text-blue-700" },
+        { name: "Stata", sub: "regressioni panel, econometria", icon: <TbChartHistogram />, color: "text-red-600" },
         { name: "Tableau", icon: <TbChartBar />, color: "text-blue-600" },
         { name: "Microsoft Excel", sub: "Pivot Tables, XLOOKUP", icon: <TbFileExcel />, color: "text-emerald-600" },
       ],

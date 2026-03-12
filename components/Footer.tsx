@@ -25,7 +25,7 @@ export default function Footer() {
           <span className="text-xs text-gray-500">
             Sito realizzato da{" "}
             <a
-              href="https://www.rediverse.cc/"
+              href="https://www.rediverse.cc/projects"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-300 transition-colors underline"

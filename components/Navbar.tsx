@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiMenu, FiX, FiDownload, FiSun, FiMoon } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { TranslationKey } from "@/lib/translations";
 
-const navLinkKeys: { labelKey: TranslationKey; href: string }[] = [
-  { labelKey: "nav_about", href: "#about" },
-  { labelKey: "nav_education", href: "#education" },
-  { labelKey: "nav_internships", href: "#internships" },
-  { labelKey: "nav_projects", href: "#projects" },
-  { labelKey: "nav_skills", href: "#skills" },
-  { labelKey: "nav_contact", href: "#contact" },
+const navLinkKeys: { labelKey: TranslationKey; hash: string }[] = [
+  { labelKey: "nav_about", hash: "about" },
+  { labelKey: "nav_education", hash: "education" },
+  { labelKey: "nav_internships", hash: "internships" },
+  { labelKey: "nav_projects", hash: "projects" },
+  { labelKey: "nav_skills", hash: "skills" },
+  { labelKey: "nav_contact", hash: "contact" },
 ];
 
 export default function Navbar() {
@@ -21,6 +22,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, t } = useLang();
   const { dark, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const linkHref = (hash: string) => isHome ? `#${hash}` : `/#${hash}`;
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -48,7 +52,7 @@ export default function Navbar() {
             {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
           </button>
           <a
-            href="#hero"
+            href={isHome ? "#hero" : "/"}
             className="text-lg font-bold text-gray-900 dark:text-gray-100"
             style={{ fontFamily: "var(--font-display)" }}
           >
@@ -60,8 +64,8 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-6">
           {navLinkKeys.map((link) => (
             <a
-              key={link.href}
-              href={link.href}
+              key={link.hash}
+              href={linkHref(link.hash)}
               className="text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors font-medium text-sm"
             >
               {t(link.labelKey)}
@@ -108,8 +112,8 @@ export default function Navbar() {
           >
             {navLinkKeys.map((link) => (
               <a
-                key={link.href}
-                href={link.href}
+                key={link.hash}
+                href={linkHref(link.hash)}
                 className="text-gray-700 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 font-medium"
                 onClick={() => setMenuOpen(false)}
               >
