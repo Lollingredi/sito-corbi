@@ -29,17 +29,18 @@ const MEMBER_FILL = "rgba(99,102,241,0.12)";
 const CASUAL_FILL = "rgba(245,158,11,0.12)";
 
 /* ── Dataset ─────────────────────────────────────────────────────────────── */
-const MONTHLY_M = [83210, 95420, 178460, 214330, 258740, 320150, 345780, 334920, 278650, 225410, 121840, 80234];
-const MONTHLY_C = [18540, 24310,  61820,  98430, 148720, 248670, 312440, 298540, 201830, 112440,  38920, 12943];
-const WEEKLY_M  = [398000, 425000, 432000, 420000, 415000, 295000, 252000];
-const WEEKLY_C  = [148000, 162000, 178000, 190000, 225000, 488000, 481000];
-const DAILY_DUR_M = [11.8, 12.1, 12.4, 12.2, 12.0, 14.1, 13.9];
-const DAILY_DUR_C = [24.5, 24.1, 25.0, 25.2, 26.3, 33.4, 32.8];
-const DUR_DIST_M  = [8, 52, 28, 9, 3];
-const DUR_DIST_C  = [2, 18, 32, 29, 19];
+// Source: final_insights_monthly.txt (month_sort order Jan→Dec)
+const MONTHLY_M = [112331, 122097, 208458, 257921, 313996, 379523, 430394, 443130, 440954, 414094, 251924, 109380];
+const MONTHLY_C = [23405,  27003,  82864,  105260, 175655, 278702, 308446, 323533, 254727, 214380,  94719,  27112];
+// Source: final_insights_weekly.txt (Mon→Sun order)
+const WEEKLY_M  = [493322, 552529, 540212, 565177, 518551, 439876, 374535];
+const WEEKLY_C  = [219232, 216926, 212744, 247893, 306463, 395595, 316953];
+// Source: final_insights_weekly.txt avg_ride_length_min (Mon→Sun)
+const DAILY_DUR_M = [11.26, 11.35, 11.13, 11.23, 11.64, 12.81, 12.95];
+const DAILY_DUR_C = [19.20, 17.12, 15.86, 16.95, 19.10, 21.90, 22.60];
 
-const TOTAL_M = MONTHLY_M.reduce((a, b) => a + b, 0); // 2,737,144
-const TOTAL_C = MONTHLY_C.reduce((a, b) => a + b, 0); // 1,872,607
+const TOTAL_M = MONTHLY_M.reduce((a, b) => a + b, 0); // 3,484,202
+const TOTAL_C = MONTHLY_C.reduce((a, b) => a + b, 0); // 1,915,806
 const PCT_M   = MONTHLY_M.map(v => +(v / TOTAL_M * 100).toFixed(1));
 const PCT_C   = MONTHLY_C.map(v => +(v / TOTAL_C * 100).toFixed(1));
 const RATIO   = MONTHLY_M.map((_, i) => +(MONTHLY_C[i] / MONTHLY_M[i]).toFixed(2));
@@ -54,11 +55,11 @@ const CONTENT = {
 
     stat_member_rides: "Corse Members",     stat_casual_rides: "Corse Casual",
     stat_member_dur:   "Durata · Member",   stat_casual_dur:   "Durata · Casual",
-    stat_total:        "Totale Corse (2023)",
-    stat_member_sub:   "59.4% del totale",  stat_casual_sub:   "40.6% del totale",
+    stat_total:        "Totale Corse (2025)",
+    stat_member_sub:   "64.6% del totale",  stat_casual_sub:   "35.4% del totale",
     stat_member_dur_sub: "Uso orientato al commute",
-    stat_casual_dur_sub: "2.3× più lungo dei members",
-    stat_total_sub:    "Gen 2023 – Dic 2023",
+    stat_casual_dur_sub: "1.7× più lungo dei members",
+    stat_total_sub:    "Gen 2025 – Dic 2025",
 
     tab_duration: "Durata Corse",
     tab_weekly:   "Pattern Settimanale",
@@ -66,12 +67,10 @@ const CONTENT = {
     tab_data:     "Tabelle Dati",
     tab_insights: "Insights",
 
-    chart_dur_type_title: "Durata Media per Tipo di Bici",
-    chart_dur_type_desc:  "I casual rider percorrono tragitti più lunghi su ogni tipo di bici",
+    chart_dur_type_title: "Durata Media per Tipo di Utente",
+    chart_dur_type_desc:  "I casual rider percorrono tragitti più lunghi in ogni giorno della settimana",
     chart_count_title:    "Distribuzione Corse",
-    chart_count_desc:     "Totale corse per segmento (2023)",
-    chart_dist_title:     "Distribuzione Durata",
-    chart_dist_desc:      "% corse per fascia di durata",
+    chart_count_desc:     "Totale corse per segmento (2025)",
     chart_weekly_title:   "Corse Settimanali per Tipo di Utente",
     chart_weekly_desc:    "I members picco nei giorni feriali; i casual preferiscono il weekend",
     chart_weekly_dur_title: "Durata Media Giornaliera (min)",
@@ -92,10 +91,10 @@ const CONTENT = {
     table_kpi_desc:      "Statistiche aggregate per tipo di utente",
 
     insights: [
-      { title: "Corse Casual Più Lunghe", text: "La durata media dei casual rider (28.1 min) è 2.3× più lunga di quella dei members (12.4 min), suggerendo un uso leisure vs commute." },
-      { title: "Casual Preferisce il Weekend", text: "Il ridership casual picco sabato–domenica (~35% dei viaggi settimanali), mentre i members guidano con costanza dal lunedì al venerdì." },
-      { title: "Forte Stagionalità", text: "Le corse casual sono altamente stagionali — giugno/luglio/agosto rappresentano ~58% delle corse casual annuali vs ~44% per i members." },
-      { title: "Opportunità di Conversione", text: "Con 1.87M corse casual e forte engagement estivo, anche una conversione del 10% in abbonamento annuale rappresenterebbe una crescita significativa." },
+      { title: "Corse Casual Più Lunghe", text: "La durata media dei casual rider (19.41 min) è 1.7× più lunga di quella dei members (11.68 min), suggerendo un uso leisure vs commute." },
+      { title: "Casual Preferisce il Weekend", text: "Il ridership casual picco sabato–domenica (~37% dei viaggi settimanali), mentre i members guidano con costanza dal lunedì al venerdì." },
+      { title: "Forte Stagionalità", text: "Le corse casual sono altamente stagionali — luglio/agosto/settembre rappresentano oltre il 46% delle corse casual annuali vs ~38% per i members." },
+      { title: "Opportunità di Conversione", text: "Con 1.92M corse casual e forte engagement estivo, anche una conversione del 10% in abbonamento annuale rappresenterebbe una crescita significativa." },
     ],
     recs_title: "Raccomandazioni Business",
     recs_desc:  "Strategie per convertire i casual rider in abbonati annuali",
@@ -105,7 +104,7 @@ const CONTENT = {
       { n: "03", title: "Touchpoint alle Stazioni Chiave", desc: "Identificare le stazioni con alto ridership casual nel weekend. Installare QR code e prompt in-app per incentivare le iscrizioni sul momento." },
     ],
     learnings: [
-      "Prima esperienza end-to-end su dataset reale (~4.6M righe) con SQL e Tableau",
+      "Prima esperienza end-to-end su dataset reale (~5.4M righe) con SQL e Tableau",
       "Gestione del ciclo di analisi: dalla definizione del problema alla presentazione agli stakeholder",
       "Presentazione strutturata dei risultati per un pubblico non tecnico",
       "Padronanza di BigQuery per l'aggregazione di grandi volumi di dati",
@@ -113,17 +112,15 @@ const CONTENT = {
 
     intro_title: "Il Progetto",
     intro_text: "Cyclistic è un servizio di bike-sharing di Chicago con oltre 5.800 biciclette e 692 stazioni. Il progetto nasce da una domanda di business concreta: in che modo i casual rider e i membri annuali usano le biciclette in modo diverso? Capirlo è essenziale perché i membri annuali sono significativamente più redditizi per l'azienda rispetto ai casual rider, e il team marketing vuole identificare le leve per incentivare la conversione.",
-    intro_dataset: "Per rispondere, ho analizzato 4,61 milioni di corse registrate nel 2023. I dati sono stati puliti e aggregati con SQL su BigQuery, poi visualizzati con Tableau. Qui sotto trovi i grafici interattivi che documentano l'intero percorso di analisi.",
+    intro_dataset: "Per rispondere, ho analizzato 5.40 milioni di corse registrate nel 2025. I dati sono stati puliti e aggregati con SQL su BigQuery, poi visualizzati con Tableau. Qui sotto trovi i grafici interattivi che documentano l'intero percorso di analisi.",
     tabs_note_title: "Come leggere questa analisi",
-    tabs_note: "I grafici sono organizzati in quattro aree tematiche: Durata Corse (quanto durano le corse per tipo di utente e di bici), Pattern Settimanale (come cambia il comportamento giorno per giorno), Trend Mensile (la stagionalità nel corso dell'anno), e Tabelle Dati (i dati grezzi aggregati, filtrabili e ordinabili). La scheda Insights raccoglie le conclusioni e le raccomandazioni per il business.",
+    tabs_note: "I grafici sono organizzati in quattro aree tematiche: Durata Corse (durata media per tipo di utente), Pattern Settimanale (come cambia il comportamento giorno per giorno), Trend Mensile (la stagionalità nel corso dell'anno), e Tabelle Dati (i dati grezzi aggregati, filtrabili e ordinabili). La scheda Insights raccoglie le conclusioni e le raccomandazioni per il business.",
     conclusion_title: "Conclusioni",
-    conclusion_text: "L'analisi rivela due profili d'uso nettamente distinti. I members usano le bici in modo regolare e funzionale — principalmente per il commute nei giorni feriali, con corse brevi di circa 12 minuti. I casual rider hanno invece un comportamento orientato al leisure: corse più lunghe (~28 min), concentrate nel fine settimana e nei mesi estivi, quando rappresentano oltre il 58% delle loro corse annuali.",
-    conclusion_opportunity: "Questo gap comportamentale è un'opportunità di marketing concreta. Una strategia che valorizzi l'abbonamento anche per usi leisure e weekend — con campagne estive e touchpoint nelle stazioni ad alto traffico casual — potrebbe convertire una quota significativa degli 1,87 milioni di casual rider in abbonati annuali, impatto diretto sui ricavi di Cyclistic.",
+    conclusion_text: "L'analisi rivela due profili d'uso nettamente distinti. I members usano le bici in modo regolare e funzionale — principalmente per il commute nei giorni feriali, con corse brevi di circa 11.7 minuti. I casual rider hanno invece un comportamento orientato al leisure: corse più lunghe (~19 min), concentrate nel fine settimana e nei mesi estivi (luglio–settembre), quando rappresentano circa il 46% delle loro corse annuali.",
+    conclusion_opportunity: "Questo gap comportamentale è un'opportunità di marketing concreta. Una strategia che valorizzi l'abbonamento anche per usi leisure e weekend — con campagne estive e touchpoint nelle stazioni ad alto traffico casual — potrebbe convertire una quota significativa degli 1.92 milioni di casual rider in abbonati annuali, impatto diretto sui ricavi di Cyclistic.",
 
     months: ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"],
     days:   ["Lun","Mar","Mer","Gio","Ven","Sab","Dom"],
-    bike_types: ["Classic Bike", "Electric Bike"],
-    dur_buckets: ["<5 min","5–15 min","15–30 min","30–60 min",">60 min"],
     legend_member: "Members",
     legend_casual: "Casual",
   },
@@ -135,11 +132,11 @@ const CONTENT = {
 
     stat_member_rides: "Member Rides",      stat_casual_rides: "Casual Rides",
     stat_member_dur:   "Duration · Member", stat_casual_dur:   "Duration · Casual",
-    stat_total:        "Total Rides (2023)",
-    stat_member_sub:   "59.4% of total",    stat_casual_sub:   "40.6% of total",
+    stat_total:        "Total Rides (2025)",
+    stat_member_sub:   "64.6% of total",    stat_casual_sub:   "35.4% of total",
     stat_member_dur_sub: "Commute-oriented usage",
-    stat_casual_dur_sub: "2.3× longer than members",
-    stat_total_sub:    "Jan 2023 – Dec 2023",
+    stat_casual_dur_sub: "1.7× longer than members",
+    stat_total_sub:    "Jan 2025 – Dec 2025",
 
     tab_duration: "Ride Duration",
     tab_weekly:   "Weekly Patterns",
@@ -147,12 +144,10 @@ const CONTENT = {
     tab_data:     "Data Tables",
     tab_insights: "Insights",
 
-    chart_dur_type_title: "Avg Duration by Bike Type",
-    chart_dur_type_desc:  "Casual riders take longer trips on every bike type",
+    chart_dur_type_title: "Avg Duration by User Type",
+    chart_dur_type_desc:  "Casual riders take longer trips every day of the week",
     chart_count_title:    "Ride Count Distribution",
-    chart_count_desc:     "Total rides per user segment (2023)",
-    chart_dist_title:     "Duration Distribution",
-    chart_dist_desc:      "% of rides by duration bucket",
+    chart_count_desc:     "Total rides per user segment (2025)",
     chart_weekly_title:   "Weekly Rides by User Type",
     chart_weekly_desc:    "Members peak on weekdays; casual riders peak on weekends",
     chart_weekly_dur_title: "Daily Average Duration (min)",
@@ -173,10 +168,10 @@ const CONTENT = {
     table_kpi_desc:      "Statistics by user type",
 
     insights: [
-      { title: "Casual Riders Take Longer Trips", text: "Average trip duration for casual riders (28.1 min) is 2.3× longer than for members (12.4 min), suggesting leisure-oriented vs. commute usage." },
-      { title: "Casual Riders Prefer Weekends", text: "Casual ridership peaks Saturday–Sunday (~35% of weekly trips), while members ride consistently Monday–Friday for commuting." },
-      { title: "Strong Seasonal Patterns", text: "Casual rides are highly seasonal — June/July/August account for ~58% of annual casual rides vs ~44% for members." },
-      { title: "Conversion Opportunity", text: "With 1.87M casual rides and strong summer engagement, even a 10% conversion to annual membership could represent significant revenue growth." },
+      { title: "Casual Riders Take Longer Trips", text: "Average trip duration for casual riders (19.41 min) is 1.7× longer than for members (11.68 min), suggesting leisure-oriented vs. commute usage." },
+      { title: "Casual Riders Prefer Weekends", text: "Casual ridership peaks Saturday–Sunday (~37% of weekly trips), while members ride consistently Monday–Friday for commuting." },
+      { title: "Strong Seasonal Patterns", text: "Casual rides are highly seasonal — July/August/September account for ~46% of annual casual rides vs ~38% for members." },
+      { title: "Conversion Opportunity", text: "With 1.92M casual rides and strong summer engagement, even a 10% conversion to annual membership could represent significant revenue growth." },
     ],
     recs_title: "Business Recommendations",
     recs_desc:  "Strategies to convert casual riders into annual members",
@@ -186,7 +181,7 @@ const CONTENT = {
       { n: "03", title: "Touchpoints at Key Stations", desc: "Identify stations with high casual ridership on weekends. Deploy QR codes and in-app prompts at these locations during peak hours to drive in-the-moment conversions." },
     ],
     learnings: [
-      "First end-to-end experience on a real dataset (~4.6M rows) with SQL and Tableau",
+      "First end-to-end experience on a real dataset (~5.4M rows) with SQL and Tableau",
       "Full management of the analysis lifecycle: from problem definition to stakeholder presentation",
       "Structured presentation of results for a non-technical audience",
       "Proficiency with BigQuery for aggregating large data volumes",
@@ -194,17 +189,15 @@ const CONTENT = {
 
     intro_title: "The Project",
     intro_text: "Cyclistic is a fictional bike-share service in Chicago with over 5,800 bicycles and 692 stations. The project starts from a concrete business question: how do casual riders and annual members use bikes differently? Understanding this is essential because annual members are significantly more profitable for the company than casual riders, and the marketing team wants to identify the levers to drive conversion.",
-    intro_dataset: "To answer this, I analysed 4.61 million rides recorded in 2023. Data was cleaned and aggregated with SQL on BigQuery, then visualised with Tableau. The interactive charts below document the full analysis journey.",
+    intro_dataset: "To answer this, I analysed 5.40 million rides recorded in 2025. Data was cleaned and aggregated with SQL on BigQuery, then visualised with Tableau. The interactive charts below document the full analysis journey.",
     tabs_note_title: "How to read this analysis",
-    tabs_note: "The charts are organised into four thematic areas: Ride Duration (how long trips last by user type and bike type), Weekly Patterns (how behaviour changes day by day), Seasonal Trends (seasonality across the year), and Data Tables (aggregated raw data, filterable and sortable). The Insights tab collects the key findings and business recommendations.",
+    tabs_note: "The charts are organised into four thematic areas: Ride Duration (average trip duration by user type), Weekly Patterns (how behaviour changes day by day), Seasonal Trends (seasonality across the year), and Data Tables (aggregated raw data, filterable and sortable). The Insights tab collects the key findings and business recommendations.",
     conclusion_title: "Conclusions",
-    conclusion_text: "The analysis reveals two clearly distinct usage profiles. Members use bikes in a regular, functional way — primarily for weekday commuting, with short trips of around 12 minutes. Casual riders, on the other hand, exhibit leisure-oriented behaviour: longer trips (~28 min), concentrated at weekends and in summer months, when they account for more than 58% of their annual rides.",
-    conclusion_opportunity: "This behavioural gap is a concrete marketing opportunity. A strategy that highlights the value of membership for leisure and weekend use — with summer campaigns and touchpoints at high casual-traffic stations — could convert a meaningful share of the 1.87 million casual riders into annual members, directly impacting Cyclistic's revenue.",
+    conclusion_text: "The analysis reveals two clearly distinct usage profiles. Members use bikes in a regular, functional way — primarily for weekday commuting, with short trips of around 11.7 minutes. Casual riders, on the other hand, exhibit leisure-oriented behaviour: longer trips (~19 min), concentrated at weekends and in summer months (July–September), when they account for approximately 46% of their annual rides.",
+    conclusion_opportunity: "This behavioural gap is a concrete marketing opportunity. A strategy that highlights the value of membership for leisure and weekend use — with summer campaigns and touchpoints at high casual-traffic stations — could convert a meaningful share of the 1.92 million casual riders into annual members, directly impacting Cyclistic's revenue.",
 
     months: ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     days:   ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-    bike_types: ["Classic Bike", "Electric Bike"],
-    dur_buckets: ["<5 min","5–15 min","15–30 min","30–60 min",">60 min"],
     legend_member: "Members",
     legend_casual: "Casual",
   },
@@ -296,25 +289,30 @@ export default function CyclisticPage() {
   }
 
   /* ── Tab: duration charts ──────────────────────────────────── */
-  const durTypeData = {
-    labels: c.bike_types,
+  // Overall avg duration per user type (source: final_insights_overview.txt)
+  const avgDurData = {
+    labels: [c.legend_member, c.legend_casual],
     datasets: [
-      { label: c.legend_member, data: [13.2, 11.8], backgroundColor: MEMBER_CLR, borderRadius: 4 },
-      { label: c.legend_casual, data: [30.4, 22.7], backgroundColor: CASUAL_CLR, borderRadius: 4 },
+      {
+        label: "Avg Duration (min)",
+        data: [11.68, 19.41],
+        backgroundColor: [MEMBER_CLR, CASUAL_CLR],
+        borderRadius: 6,
+      },
     ],
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lbl = (fn: (ctx: any) => string) => fn;
 
-  const durTypeOpts = {
+  const avgDurOpts = {
     ...baseOpts(v => v + " min"),
     plugins: {
       ...baseOpts().plugins,
-      legend: legend(),
-      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw} min`) } },
+      legend: { display: false },
+      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.label}: ${ctx.raw} min`) } },
     },
     scales: {
-      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
+      x: { grid: { display: false }, ticks: { color: muted, font: { size: 13 } } },
       y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + " min" } },
     },
   };
@@ -336,26 +334,6 @@ export default function CyclisticPage() {
     plugins: {
       legend: { ...legend(), position: "bottom" as const },
       tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.label}: ${((ctx.raw as number) / 1e6).toFixed(2)}M`) } },
-    },
-  };
-
-  const durDistData = {
-    labels: c.dur_buckets,
-    datasets: [
-      { label: c.legend_member, data: DUR_DIST_M, backgroundColor: MEMBER_CLR, borderRadius: 3 },
-      { label: c.legend_casual, data: DUR_DIST_C, backgroundColor: CASUAL_CLR, borderRadius: 3 },
-    ],
-  };
-  const durDistOpts = {
-    ...baseOpts(v => v + "%"),
-    plugins: {
-      ...baseOpts().plugins,
-      legend: legend(),
-      tooltip: { ...tt, callbacks: { label: lbl(ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`) } },
-    },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: muted, font: { size: 11 } } },
-      y: { grid: { color: grid }, ticks: { color: muted, font: { size: 11 }, callback: (v: number | string) => v + "%" } },
     },
   };
 
@@ -550,11 +528,11 @@ export default function CyclisticPage() {
         <section className="border-b border-gray-100 dark:border-gray-700">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              <StatCard label={c.stat_member_rides} value="2.74M" sub={c.stat_member_sub} accent="member" />
-              <StatCard label={c.stat_casual_rides} value="1.87M" sub={c.stat_casual_sub} accent="casual" />
-              <StatCard label={c.stat_member_dur}   value="12.4 min" sub={c.stat_member_dur_sub} accent="member" />
-              <StatCard label={c.stat_casual_dur}   value="28.1 min" sub={c.stat_casual_dur_sub} accent="casual" />
-              <StatCard label={c.stat_total}         value="4.61M" sub={c.stat_total_sub} accent="neutral" />
+              <StatCard label={c.stat_member_rides} value="3.48M" sub={c.stat_member_sub} accent="member" />
+              <StatCard label={c.stat_casual_rides} value="1.92M" sub={c.stat_casual_sub} accent="casual" />
+              <StatCard label={c.stat_member_dur}   value="11.68 min" sub={c.stat_member_dur_sub} accent="member" />
+              <StatCard label={c.stat_casual_dur}   value="19.41 min" sub={c.stat_casual_dur_sub} accent="casual" />
+              <StatCard label={c.stat_total}         value="5.40M" sub={c.stat_total_sub} accent="neutral" />
             </div>
           </div>
         </section>
@@ -601,19 +579,14 @@ export default function CyclisticPage() {
           {activeTab === "duration" && (
             <motion.div key="duration" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <ChartCard title={c.chart_dur_type_title} desc={c.chart_dur_type_desc} full>
+              <ChartCard title={c.chart_dur_type_title} desc={c.chart_dur_type_desc}>
                 <div className="h-64">
-                  <Bar data={durTypeData} options={durTypeOpts as Parameters<typeof Bar>[0]["options"]} />
+                  <Bar data={avgDurData} options={avgDurOpts as Parameters<typeof Bar>[0]["options"]} />
                 </div>
               </ChartCard>
               <ChartCard title={c.chart_count_title} desc={c.chart_count_desc}>
                 <div className="h-60">
                   <Doughnut data={donutData} options={donutOpts} />
-                </div>
-              </ChartCard>
-              <ChartCard title={c.chart_dist_title} desc={c.chart_dist_desc}>
-                <div className="h-60">
-                  <Bar data={durDistData} options={durDistOpts as Parameters<typeof Bar>[0]["options"]} />
                 </div>
               </ChartCard>
             </motion.div>
@@ -728,7 +701,7 @@ export default function CyclisticPage() {
                           <motion.tr key={`${row.month}-${row.type}-${i}`}
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15, delay: i * 0.02 }}
                             className="hover:bg-white dark:hover:bg-gray-700/50 transition-colors">
-                            <td className="px-6 py-2.5 text-gray-700 dark:text-gray-200">{row.month} 2023</td>
+                            <td className="px-6 py-2.5 text-gray-700 dark:text-gray-200">{row.month} 2025</td>
                             <td className="px-4 py-2.5">
                               <span className={`inline-block px-2 py-0.5 rounded text-xs uppercase tracking-wide ${
                                 isM ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
@@ -770,8 +743,8 @@ export default function CyclisticPage() {
                     </thead>
                     <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
                       {[
-                        { type: "member", rides: "2,737,144", avg: "12.4", share: "59.4%" },
-                        { type: "casual", rides: "1,872,607", avg: "28.1", share: "40.6%" },
+                        { type: "member", rides: "3,484,202", avg: "11.68", share: "64.6%" },
+                        { type: "casual", rides: "1,915,806", avg: "19.41", share: "35.4%" },
                       ].map(row => (
                         <tr key={row.type} className="hover:bg-white dark:hover:bg-gray-700/50 transition-colors">
                           <td className="px-6 py-3">
