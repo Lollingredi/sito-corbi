@@ -96,6 +96,24 @@ export const translations = {
     contact_linkedin_sub: "Connettiti con me",
     contact_github_sub: "Vedi i miei repo",
 
+    // Internships
+    nav_internships: "Tirocini",
+    intern_label: "Esperienza",
+    intern_title: "Tirocini",
+    intern_item0_title: "Assistente coordinatore Ufficio Politico",
+    intern_item0_org: "Consiglio Regionale delle Marche",
+    intern_item0_location: "Ancona, Italia",
+    intern_item0_period: "Mar 2018 – Giu 2018",
+    intern_item1_title: "Receptionist",
+    intern_item1_org: "Hotel Venezia",
+    intern_item1_location: "Senigallia (Ancona), Italia",
+    intern_item1_period: "Mag 2017 – Set 2018",
+    intern_item1_note: "Tempo pieno, stagionale",
+    intern_item2_title: "Addetto alla Pianificazione Pazienti",
+    intern_item2_org: "Avis",
+    intern_item2_location: "Montemarciano (Ancona), Italia",
+    intern_item2_period: "Apr 2021 – Set 2021",
+
     // Footer
     footer_role: "Data Analyst",
   },
@@ -195,6 +213,24 @@ export const translations = {
     contact_phone: "Phone",
     contact_linkedin_sub: "Connect with me",
     contact_github_sub: "See my repos",
+
+    // Internships
+    nav_internships: "Internships",
+    intern_label: "Experience",
+    intern_title: "Internships",
+    intern_item0_title: "Political Office Coordinator Assistant",
+    intern_item0_org: "Consiglio Regionale delle Marche",
+    intern_item0_location: "Ancona, Italy",
+    intern_item0_period: "Mar 2018 – Jun 2018",
+    intern_item1_title: "Receptionist",
+    intern_item1_org: "Hotel Venezia",
+    intern_item1_location: "Senigallia (Ancona), Italy",
+    intern_item1_period: "May 2017 – Sep 2018",
+    intern_item1_note: "Full-time, seasonal",
+    intern_item2_title: "Patient Planning Officer",
+    intern_item2_org: "Avis",
+    intern_item2_location: "Montemarciano (Ancona), Italy",
+    intern_item2_period: "Apr 2021 – Sep 2021",
 
     // Footer
     footer_role: "Data Analyst",

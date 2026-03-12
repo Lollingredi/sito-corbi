@@ -10,6 +10,7 @@ import { TranslationKey } from "@/lib/translations";
 const navLinkKeys: { labelKey: TranslationKey; href: string }[] = [
   { labelKey: "nav_about", href: "#about" },
   { labelKey: "nav_education", href: "#education" },
+  { labelKey: "nav_internships", href: "#internships" },
   { labelKey: "nav_projects", href: "#projects" },
   { labelKey: "nav_skills", href: "#skills" },
   { labelKey: "nav_contact", href: "#contact" },
