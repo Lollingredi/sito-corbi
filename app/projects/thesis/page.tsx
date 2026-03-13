@@ -39,6 +39,17 @@ const CF_STATUS_QUO = [57.32, 71.00, 64.86];
 const CF_SCENARIO_1 = [70.17, 71.00, 70.63];
 const CF_SCENARIO_2 = [71.24, 71.00, 71.11];
 
+const PROF_LINK = (
+  <a
+    href="https://www.wiwi.uni-wuerzburg.de/en/vwl2/team/prof-dr-michael-pflueger/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline hover:text-indigo-400 transition-colors"
+  >
+    Prof. Michael Pflüger
+  </a>
+);
+
 /* ── Bilingual content ───────────────────────────────────────── */
 const CONTENT = {
   it: {
@@ -48,7 +59,7 @@ const CONTENT = {
     period:              "Ott 2022 – Dic 2024",
     grade_label:         "Voto",
     grade:               "110/110",
-    supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
+    supervisor:          <span>Supervisor: {PROF_LINK} · Julius-Maximilian Universität Würzburg</span>,
     subtitle:            "Tesi di Laurea Magistrale · Economics and Data Analysis",
 
     /* Context (new: frames the economic policy problem) */
@@ -128,7 +139,7 @@ const CONTENT = {
       {
         phase: "LaTeX",
         title: "Scrittura & output LaTeX",
-        desc:  "Tesi completa con tabelle e figure generate automaticamente da Stata, supervisione del Prof. Michael Pflüger (Julius-Maximilian Universität Würzburg). Voto finale 110/110.",
+        desc:  <span>Tesi completa con tabelle e figure generate automaticamente da Stata, supervisione del {PROF_LINK} (Julius-Maximilian Universität Würzburg). Voto finale 110/110.</span>,
       },
     ],
 
@@ -158,7 +169,7 @@ const CONTENT = {
     period:              "Oct 2022 – Dec 2024",
     grade_label:         "Grade",
     grade:               "110/110",
-    supervisor:          "Supervisor: Prof. Michael Pflüger · Julius-Maximilian Universität Würzburg",
+    supervisor:          <span>Supervisor: {PROF_LINK} · Julius-Maximilian Universität Würzburg</span>,
     subtitle:            "Master's Thesis · Economics and Data Analysis",
 
     context_label: "Context",
@@ -233,7 +244,7 @@ const CONTENT = {
       {
         phase: "LaTeX",
         title: "Writing & LaTeX output",
-        desc:  "Full thesis with tables and figures automatically generated from Stata, supervised by Prof. Michael Pflüger (Julius-Maximilian Universität Würzburg). Final grade 110/110.",
+        desc:  <span>Full thesis with tables and figures automatically generated from Stata, supervised by {PROF_LINK} (Julius-Maximilian Universität Würzburg). Final grade 110/110.</span>,
       },
     ],
 
