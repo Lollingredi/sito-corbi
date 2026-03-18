@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Michele Corbisiero — Portfolio
 
-## Getting Started
+Sito portfolio personale di Michele Corbisiero, data analyst. Realizzato da [Redi Bako](https://www.rediverse.cc/projects).
 
-First, run the development server:
+## Stack tecnico
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Categoria | Tecnologia |
+|-----------|------------|
+| Framework | Next.js 16 (App Router) |
+| Linguaggio | TypeScript 5 |
+| UI | React 19 |
+| Stile | Tailwind CSS 4 |
+| Animazioni | Framer Motion 12 |
+| Grafici | Chart.js 4 + react-chartjs-2 |
+| Icone | react-icons 5 |
+| Deploy | Vercel |
+
+## Struttura del progetto
+
+```
+app/
+├── page.tsx                          # Homepage (hero, about, education, progetti, skills, contatti)
+└── projects/
+    ├── thesis/page.tsx               # Pagina tesi magistrale
+    └── cyclistic-bike-share/page.tsx # Pagina progetto Cyclistic
+
+components/
+├── Navbar.tsx      # Navbar responsive con routing dinamico homepage/progetto
+├── Footer.tsx      # Footer con link social
+├── Skills.tsx      # Sezione strumenti e linguaggi
+└── ...             # Altri componenti sezione homepage
+
+context/
+├── LanguageContext.tsx  # Context bilingue IT/EN
+└── ThemeContext.tsx     # Context dark/light mode
+
+lib/
+└── translations.ts     # Stringhe tradotte IT/EN
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funzionalità
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Bilingue** — Italiano / Inglese con switch dinamico
+- **Dark mode** — Toggle persistente
+- **Routing smart** — La navbar usa `usePathname` per generare link corretti da qualsiasi pagina (`/#sezione` vs `#sezione`)
+- **Pagine progetto** — Pagine dedicate con grafici interattivi (Chart.js) e animazioni scroll (Framer Motion)
+- **Statico** — Build completamente statica (SSG), nessun server richiesto a runtime
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Comandi
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev    # Server di sviluppo su http://localhost:3000
+npm run build  # Build di produzione
+npm run start  # Avvia la build di produzione
+npm run lint   # Linting ESLint
+```
