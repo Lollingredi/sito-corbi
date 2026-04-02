@@ -2,12 +2,14 @@
 
 // Sito realizzato da Redi Bako — https://www.rediverse.cc/
 
-import { FiLinkedin, FiGithub, FiMail } from "react-icons/fi";
+import { FiLinkedin, FiGithub, FiMail, FiSun, FiMoon } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const { t } = useLang();
+  const { dark, toggleTheme } = useTheme();
 
   return (
     <footer className="bg-gray-900 text-gray-400 py-10">
@@ -29,6 +31,13 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:text-white hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {dark ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
+          </button>
           <a
             href="mailto:corbisieromichele00@gmail.com"
             className="hover:text-white transition-colors"

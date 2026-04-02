@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiMenu, FiX, FiDownload, FiSun, FiMoon } from "react-icons/fi";
+import { FiMenu, FiX, FiDownload } from "react-icons/fi";
 import { useLang } from "@/context/LanguageContext";
-import { useTheme } from "@/context/ThemeContext";
 import { TranslationKey } from "@/lib/translations";
 
 const navLinkKeys: { labelKey: TranslationKey; hash: string }[] = [
@@ -21,7 +20,6 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, t } = useLang();
-  const { dark, toggleTheme } = useTheme();
   const pathname = usePathname();
   const isHome = pathname === "/";
   const linkHref = (hash: string) => isHome ? `#${hash}` : `/#${hash}`;
@@ -42,23 +40,14 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
 
-        {/* Left: theme toggle (desktop) + logo */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            className="hidden md:flex p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Toggle theme"
-          >
-            {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
-          </button>
-          <a
-            href={isHome ? "#hero" : "/"}
-            className="text-lg font-bold text-gray-900 dark:text-gray-100"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Michele Corbisiero
-          </a>
-        </div>
+        {/* Left: logo */}
+        <a
+          href={isHome ? "#hero" : "/"}
+          className="text-lg font-bold text-gray-900 dark:text-gray-100"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Michele Corbisiero
+        </a>
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6">
@@ -130,21 +119,12 @@ export default function Navbar() {
                 <FiDownload className="w-4 h-4" />
                 {t("nav_cv")}
               </a>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setLang(lang === "it" ? "en" : "it")}
-                  className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full"
-                >
-                  {lang === "it" ? "EN" : "IT"}
-                </button>
-                <button
-                  onClick={toggleTheme}
-                  className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="Toggle theme"
-                >
-                  {dark ? <FiSun className="w-4 h-4" /> : <FiMoon className="w-4 h-4" />}
-                </button>
-              </div>
+              <button
+                onClick={() => setLang(lang === "it" ? "en" : "it")}
+                className="text-sm font-semibold text-indigo-500 border border-indigo-300 px-3 py-1.5 rounded-full"
+              >
+                {lang === "it" ? "EN" : "IT"}
+              </button>
             </div>
           </motion.div>
         )}
