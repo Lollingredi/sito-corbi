@@ -12,16 +12,9 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-400 py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div
-          className="text-white font-bold text-lg"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Michele Corbisiero
-        </div>
-
-        <div className="text-sm text-center">
-          © {year} Michele Corbisiero · {t("footer_role")}
-          <br />
+        <div className="text-sm text-center md:text-left flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span>© {year} Michele Corbisiero · {t("footer_role")}</span>
+          <span className="hidden md:inline text-gray-600">|</span>
           <span className="text-xs text-gray-500">
             Sito realizzato da{" "}
             <a
