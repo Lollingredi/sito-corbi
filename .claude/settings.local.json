@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n 'viewport={{ once: true, margin' \"C:\\\\sito-corbi\\\\app\\\\projects\\\\thesis\\\\page.tsx\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(cat next.config.ts)",
+      "Bash(cat next.config.js)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); const d={...p.dependencies,...p.devDependencies}; const keys=['next','react','typescript','tailwindcss','framer-motion','chart.js','react-chartjs-2','react-icons']; keys.forEach\\(k=>console.log\\(k+': '+d[k]\\)\\)\")",
+      "Bash(python3 \"C:\\\\Users\\\\redi0\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"data analyst personal portfolio interactive data visualizations professional editorial\" --design-system -p \"Corbisiero Analytics\" -f markdown)",
+      "Bash(dir:*)",
+      "Bash(python3 /c/Users/redi0/.claude/skills/ui-ux-pro-max/scripts/search.py \"data analyst personal portfolio\" --design-system -p \"Corbisiero Analytics\" -f markdown)",
+      "Bash(python3 \"C:/Users/redi0/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"data analyst personal portfolio interactive data visualizations professional editorial\" --design-system -p \"Corbisiero Analytics\" -f markdown)"
+    ]
+  }
+}

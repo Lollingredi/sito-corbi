@@ -1,10 +1,19 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+// Skills applied: composition-patterns (react19-no-forwardref, state-context-interface)
+import { createContext, useState, useEffect, use } from "react";
+
+interface ThemeState {
+  dark: boolean;
+}
+
+interface ThemeActions {
+  toggleTheme: () => void;
+}
 
 interface ThemeContextValue {
-  dark: boolean;
-  toggleTheme: () => void;
+  state: ThemeState;
+  actions: ThemeActions;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -17,14 +26,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [dark]);
 
   return (
-    <ThemeContext.Provider value={{ dark, toggleTheme: () => setDark((d) => !d) }}>
+    <ThemeContext
+      value={{
+        state: { dark },
+        actions: { toggleTheme: () => setDark((d) => !d) },
+      }}
+    >
       {children}
-    </ThemeContext.Provider>
+    </ThemeContext>
   );
 }
 
-export function useTheme(): ThemeContextValue {
-  const ctx = useContext(ThemeContext);
+export function useTheme(): { dark: boolean; toggleTheme: () => void } {
+  const ctx = use(ThemeContext);
   if (!ctx) throw new Error("useTheme must be used inside ThemeProvider");
-  return ctx;
+  return { dark: ctx.state.dark, toggleTheme: ctx.actions.toggleTheme };
 }

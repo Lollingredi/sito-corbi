@@ -1,12 +1,27 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+// Skills applied: composition-patterns (state-context-interface, react19-no-forwardref)
+// React 19: use() replaces useContext() and can be called conditionally.
+// Interface follows state/actions/meta pattern for dependency-injectable design.
+import { createContext, useState, use } from "react";
 import { translations, Lang, TranslationKey } from "@/lib/translations";
 
-interface LanguageContextValue {
+interface LanguageState {
   lang: Lang;
+}
+
+interface LanguageActions {
   setLang: (lang: Lang) => void;
+}
+
+interface LanguageMeta {
   t: (key: TranslationKey) => string;
+}
+
+interface LanguageContextValue {
+  state: LanguageState;
+  actions: LanguageActions;
+  meta: LanguageMeta;
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -17,14 +32,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const t = (key: TranslationKey): string => translations[lang][key];
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext value={{ state: { lang }, actions: { setLang }, meta: { t } }}>
       {children}
-    </LanguageContext.Provider>
+    </LanguageContext>
   );
 }
 
-export function useLang(): LanguageContextValue {
-  const ctx = useContext(LanguageContext);
+export function useLang(): { lang: Lang; setLang: (l: Lang) => void; t: (k: TranslationKey) => string } {
+  const ctx = use(LanguageContext);
   if (!ctx) throw new Error("useLang must be used inside LanguageProvider");
-  return ctx;
+  return { lang: ctx.state.lang, setLang: ctx.actions.setLang, t: ctx.meta.t };
 }
