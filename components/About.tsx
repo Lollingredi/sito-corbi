@@ -96,19 +96,19 @@ export default function About() {
             </div>
 
             {/* Quick facts — stat callouts */}
-            <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="mt-8 grid grid-cols-3 gap-2 sm:gap-3">
               {facts.map((fact) => (
                 <div
                   key={fact.label}
-                  className="bg-[var(--background)] rounded-xl p-4 shadow-sm border border-[var(--color-border)] text-center"
+                  className="bg-[var(--background)] rounded-xl px-2 py-3 sm:p-4 shadow-sm border border-[var(--color-border)] text-center min-w-0 overflow-hidden"
                 >
                   <div
-                    className="text-2xl font-black text-[var(--color-primary)] tabular-nums"
+                    className="text-base sm:text-xl md:text-2xl font-black text-[var(--color-primary)] tabular-nums whitespace-nowrap"
                     style={{ fontFamily: "var(--font-display)" }}
                   >
                     {fact.value}
                   </div>
-                  <div className="text-xs text-[var(--color-muted)] mt-1 leading-tight">{fact.label}</div>
+                  <div className="text-[10px] sm:text-xs text-[var(--color-muted)] mt-1 leading-tight">{fact.label}</div>
                 </div>
               ))}
             </div>

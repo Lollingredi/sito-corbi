@@ -110,13 +110,13 @@ export default function Hero() {
               aria-hidden="true"
               className="absolute -inset-3 rounded-full bg-gradient-to-br from-indigo-400/30 via-transparent to-emerald-400/20 blur-sm"
             />
-            <div className="relative w-52 h-52 sm:w-68 sm:h-68 md:w-72 md:h-72 rounded-full border-[3px] border-[var(--color-border)] shadow-2xl overflow-hidden bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-950 dark:to-emerald-950">
+            <div className="relative w-52 h-52 sm:w-68 sm:h-68 md:w-72 md:h-72 rounded-full border-[3px] border-[var(--color-border)] shadow-2xl overflow-hidden bg-[var(--background)]">
               <Image
                 src="/michele.jpeg"
                 alt="Michele Corbisiero, Data Analyst"
                 width={288}
                 height={288}
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-top opacity-100"
                 priority
               />
             </div>
