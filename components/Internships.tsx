@@ -31,6 +31,12 @@ export default function Internships() {
       location: t("intern_item2_location"),
       period: t("intern_item2_period"),
     },
+    {
+      title: t("intern_item3_title"),
+      org: t("intern_item3_org"),
+      location: t("intern_item3_location"),
+      period: t("intern_item3_period"),
+    },
   ];
 
   return (

@@ -113,6 +113,10 @@ export const translations = {
     intern_item2_org: "Avis",
     intern_item2_location: "Montemarciano (Ancona), Italia",
     intern_item2_period: "Apr 2021 – Set 2021",
+    intern_item3_title: "Internship Data Analyst",
+    intern_item3_org: "Modena Costruzioni soc. coop.",
+    intern_item3_location: "Modena, Italia",
+    intern_item3_period: "Mar 2022 – Ott 2022",
 
     // Footer
     footer_role: "Data Analyst",
@@ -231,6 +235,10 @@ export const translations = {
     intern_item2_org: "Avis",
     intern_item2_location: "Montemarciano (Ancona), Italy",
     intern_item2_period: "Apr 2021 – Sep 2021",
+    intern_item3_title: "Internship Data Analyst",
+    intern_item3_org: "Modena Costruzioni soc. coop.",
+    intern_item3_location: "Modena, Italy",
+    intern_item3_period: "Mar 2022 – Oct 2022",
 
     // Footer
     footer_role: "Data Analyst",

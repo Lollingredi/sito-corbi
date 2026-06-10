@@ -3,7 +3,7 @@
 // Skills applied: composition-patterns (state-context-interface, react19-no-forwardref)
 // React 19: use() replaces useContext() and can be called conditionally.
 // Interface follows state/actions/meta pattern for dependency-injectable design.
-import { createContext, useState, use } from "react";
+import { createContext, useState, useEffect, use } from "react";
 import { translations, Lang, TranslationKey } from "@/lib/translations";
 
 interface LanguageState {
@@ -28,6 +28,13 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLang] = useState<Lang>("it");
+
+  // Allow deep-linking a language via URL, e.g. /?lang=en (used by the English QR code).
+  // Runs only in the browser after mount, so it never breaks SSR/SSG.
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("lang");
+    if (param === "en" || param === "it") setLang(param as Lang);
+  }, []);
 
   const t = (key: TranslationKey): string => translations[lang][key];
 
