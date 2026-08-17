@@ -64,6 +64,8 @@ export const translations = {
     proj3_desc: "Progetto di clustering per la segmentazione della base clienti di un e-commerce, utilizzando algoritmi K-Means per identificare profili di acquisto e personalizzare le campagne marketing.",
     proj4_title: "Regional Misallocation: Italia vs Germania",
     proj4_desc: "Tesi magistrale 110/110 — analisi econometrica della misallocation regionale in Italia e Germania tramite regressioni panel e analisi controfattuale in Stata.",
+    proj5_title: "Potato Industry Resilience — Mitolo",
+    proj5_desc: "Analisi indipendente per Mitolo Family Farms (Adelaide) sull’impatto di meteo, inflazione e costo del carburante sui margini del settore patate tra il 2017 e il 2025, con pipeline Excel → BigQuery (SQL) → Tableau.",
 
     // Skills
     skills_label: "Toolkit",
@@ -186,6 +188,8 @@ export const translations = {
     proj3_desc: "Clustering project to segment the customer base of an e-commerce platform using K-Means algorithms to identify purchase profiles and personalise marketing campaigns.",
     proj4_title: "Regional Misallocation: Italy vs Germany",
     proj4_desc: "Master thesis 110/110 — econometric analysis of regional misallocation in Italy and Germany using panel regressions and counterfactual analysis in Stata.",
+    proj5_title: "Potato Industry Resilience — Mitolo",
+    proj5_desc: "Independent analysis for Mitolo Family Farms (Adelaide) on how weather, inflation and fuel costs affected potato-industry margins between 2017 and 2025, with an Excel → BigQuery (SQL) → Tableau pipeline.",
 
     // Skills
     skills_label: "Toolkit",

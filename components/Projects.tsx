@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useLang } from "@/context/LanguageContext";
 
 /* ── Static data — hoisted out of render (react-best-practices) */
-const PROJECT_COLORS = ["bg-indigo-500", "bg-emerald-500"] as const;
+const PROJECT_COLORS = ["bg-indigo-500", "bg-emerald-500", "bg-amber-500"] as const;
 
 /* ── Variants ──────────────────────────────────────────────────── */
 const containerVariants: Variants = {
@@ -47,6 +47,13 @@ export default function Projects() {
       tags: ["Stata", "TeX", "Econometria", "Panel Data"],
       github: "https://github.com/corbisieromichele00/thesis",
       live: "/projects/thesis",
+    },
+    {
+      title: t("proj5_title"),
+      description: t("proj5_desc"),
+      tags: ["Excel", "BigQuery (SQL)", "Tableau"],
+      github: "https://github.com/corbisieromichele00/Mitolo-Analysis",
+      live: "/projects/potato-industry-resilience",
     },
   ];
 
